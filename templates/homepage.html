@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <link rel="stylesheet" href={{ url_for('static', filename='domework.css') }}>
+        <link rel="stylesheet" href={{ url_for('static', filename='tutorifull.css') }}>
+        <title>Tutorifull</title>
+    </head>
+    <body>
+        <div class="title-header row row-centered row-vert-centered">
+            <h1>Tutorifull</h1>
+        </div>
+        <!--
+        <div class="row">
+            <div class="col-12">
+                <div class="title-header-highlight"></div>
+            </div>
+        </div>-->
+        <div class="main-content">
+            <div class="row">
+                <div class="text-box">Hello and welcome to tutorifull. It would be a better use of time to just write a blurb that is actually final but I'm just wasting time writing this filler text instead. Enjoy!</div>
+            </div>
+
+            <div class="step">
+                <div class="row row-centered">
+                    <div class="step-circle row row-centered row-vert-centered">
+                        <div>1</div>
+                    </div>
+                </div>
+                <div class="row row-centered">
+                    <div class="row row-centered row-vert-centered">
+                        <h2 class="step-title">Find Classes</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="icon search-icon"></div>
+            <input class="search-box" type="text" name="coursesearch" placeholder="Search for a course"></input>
+            <ul class="course-search-results">
+                <!--<li class="course-search-result">MEME2007 - Neo-Classical Rare Pepes</li>
+                <li class="course-search-result">MEME2848 - Identifying the Sharpest Tools in Sheds</li>
+                <li class="course-search-result">MEME2977 - Viral Videos and How to Make Them</li>
+                <li class="course-search-result">MEME3899 - Doots Throughout History</li>-->
+            </ul>
+
+            <div class="step">
+                <div class="row row-centered">
+                    <div class="step-circle row row-centered row-vert-centered">
+                        <div>2</div>
+                    </div>
+                </div>
+                <div class="row row-centered">
+                    <div class="row row-centered row-vert-centered">
+                        <h2 class="step-title">Select Classes</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-search-results">
+                <!--<div class="course-classes">
+                    <div class="course-classes-title">MEME2007</div>
+                    <div>
+                        <div class="class-infos row" data-class-id="1">
+                            <div class="class-info class-type">LEC</div>
+                            <div class="class-info class-time">Wed 12-3</div>
+                            <div class="class-info class-location">CLB 7</div>
+                            <div class="class-info class-status">Open</div>
+                            <div class="class-info class-enrolled">127/400</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="2">
+                            <div class="class-info class-type">TUT</div>
+                            <div class="class-info class-time">Thur 9-11</div>
+                            <div class="class-info class-location">MathewsThA</div>
+                            <div class="class-info class-status">Closed</div>
+                            <div class="class-info class-enrolled">22/30</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="3">
+                            <div class="class-info class-type">LAB</div>
+                            <div class="class-info class-time">Mon 18-20</div>
+                            <div class="class-info class-location">Block G15</div>
+                            <div class="class-info class-status">Open</div>
+                            <div class="class-info class-enrolled">25/25</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="4">
+                            <div class="class-info class-type">SEM</div>
+                            <div class="class-info class-time">Tue 12-3</div>
+                            <div class="class-info class-location">Law 203</div>
+                            <div class="class-info class-status">Tentative</div>
+                            <div class="class-info class-enrolled">3/5</div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+
+            <div class="step">
+                <div class="row row-centered">
+                    <div class="step-circle row row-centered row-vert-centered">
+                        <div>3</div>
+                    </div>
+                </div>
+                <div class="row row-centered">
+                    <div class="row row-centered row-vert-centered">
+                        <h2 class="step-title">Contact</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="icon email-icon"></div>
+            <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
+            <div class="contact-or">or</div>
+            <div class="icon sms-icon"></div>
+            <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
+            <div class="contact-or">or</div>
+            <div class="icon yo-icon"></div>
+            <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
+
+            <div class="step">
+                <div class="row row-centered">
+                    <div class="step-circle row row-centered row-vert-centered">
+                        <div>4</div>
+                    </div>
+                </div>
+                <div class="row row-centered">
+                    <div class="row row-centered row-vert-centered">
+                        <h2 class="step-title">Confirm</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confirm-classes">
+                <!--<div class="course-classes">
+                    <div class="course-classes-title">MEME2007</div>
+                    <div>
+                        <div class="class-infos row" data-class-id="1">
+                            <div class="class-info class-type">LEC</div>
+                            <div class="class-info class-time">Wed 12-3</div>
+                            <div class="class-info class-location">CLB 7</div>
+                            <div class="class-info class-status">Open</div>
+                            <div class="class-info class-enrolled">127/400</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="2">
+                            <div class="class-info class-type">TUT</div>
+                            <div class="class-info class-time">Thur 9-11</div>
+                            <div class="class-info class-location">MathewsThA</div>
+                            <div class="class-info class-status">Closed</div>
+                            <div class="class-info class-enrolled">22/30</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="3">
+                            <div class="class-info class-type">LAB</div>
+                            <div class="class-info class-time">Mon 18-20</div>
+                            <div class="class-info class-location">Block G15</div>
+                            <div class="class-info class-status">Open</div>
+                            <div class="class-info class-enrolled">25/25</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-classes">
+                    <div class="course-classes-title">MEME2848</div>
+                    <div>
+                        <div class="class-infos row" data-class-id="5">
+                            <div class="class-info class-type">LEC</div>
+                            <div class="class-info class-time">Wed 12-3</div>
+                            <div class="class-info class-location">CLB 7</div>
+                            <div class="class-info class-status">Open</div>
+                            <div class="class-info class-enrolled">127/400</div>
+                        </div>
+                        <div class="class-infos row" data-class-id="6">
+                            <div class="class-info class-type">TUT</div>
+                            <div class="class-info class-time">Thur 9-11</div>
+                            <div class="class-info class-location">MathewsThA</div>
+                            <div class="class-info class-status">Closed</div>
+                            <div class="class-info class-enrolled">22/30</div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <div class="row row-centered">
+                <input class="alert-me-button" type="submit" name="submit" value="Alert Me"></input>
+            </div>
+            <footer>
+                <div class="row row-centered">
+                    <div>Made by a Dome</div>
+                </div>
+            </footer>
+        </div>
+    <script type="text/javascript" src={{ url_for('static', filename='tutorifull.js') }}></script>
+    </body>
+</html>
