@@ -6,5 +6,5 @@ from __future__ import (
 )
 
 DATABASE = 'tutorifull.db'
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'example secret key'

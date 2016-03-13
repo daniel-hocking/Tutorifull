@@ -27,11 +27,6 @@ body {
 
 .title-header-highlight {
     height: 10px;
-    /*background: -moz-linear-gradient(-45deg, #ff4242 0%, #ff923f 16%, #fff53f 34%, #52ff3f 52%, #3ffff8 69%, #d242ff 85%, #ff3f89 100%);
-    background: -webkit-linear-gradient(-45deg, #ff4242 0%,#ff923f 16%,#fff53f 34%,#52ff3f 52%,#3ffff8 69%,#d242ff 85%,#ff3f89 100%);
-    background: linear-gradient(135deg, #ff4242 0%,#ff923f 16%,#fff53f 34%,#52ff3f 52%,#3ffff8 69%,#d242ff 85%,#ff3f89 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff4242', endColorstr='#ff3f89',GradientType=1 );
-`*/
     background-color: #38a370;
 }
 
@@ -47,6 +42,7 @@ body {
 }
 
 .text-box {
+    width: 100%;
     margin-top: 20px;
     padding: 15px;
     background-color: #ffffff;
@@ -80,6 +76,10 @@ body {
     background-position: center center;
 }
 
+.search-parent {
+    position: relative;
+    z-index: 1;
+}
 .search-icon {
     background-image: url("search.png");
 }
@@ -95,7 +95,19 @@ body {
 
 .course-search-results {
     position: absolute;
-    width: 85%;
+    width: 100%;
+}
+.course-search-results::after {
+    content: '';
+    height: 30px;
+    width: 100%;
+    margin-top: -20px;
+    position: absolute;
+    background-color: #e9eaed;
+    opacity: 0.8;
+    z-index: -1;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 @media only screen and (min-width:1000px) {
     .course-search-results {
@@ -129,6 +141,7 @@ body {
 .class-infos {
     padding: 15px 0 15px 0;
     background-color: #ffffff;
+    transition: background-color 0.1s;
     border: 1px solid #dbdee4;
     border-bottom: 0px;
     cursor: pointer;
@@ -227,10 +240,17 @@ body {
     margin-top: 0;
 }
 
+.success-confirm-classes {
+    margin-top: 40px;
+}
+.success-confirm-classes .class-infos {
+    cursor: default;
+}
+
 .alert-me-button {
     height: 40px;
     width: 200px;
-    margin: 30px 0 40px 0;
+    margin: 30px 0 0 0;
     background-color: #7ac18a;
     color: #404040;
     border-radius: 5px;
@@ -241,6 +261,6 @@ body {
 }
 
 footer {
-    margin: 20px 0 20px 0;
+    margin: 60px 0 20px 0;
     color: #a9a9a9;
 }

@@ -27,6 +27,7 @@ from util import (
     web_status_to_db_status,
 )
 
+DEBUG_PRINT = False
 
 init_db('sqlite:///' + DATABASE)
 
@@ -44,17 +45,21 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                          .all()}
 
     for row in klasses:
-        klass_type, _, klass_id, _, status, enrollment, _, time_and_place = (d.string for d in row)
+        klass_type, _, klass_id, _, status, enrollment, _, time_and_place = (d.get_text() for d in row)
         status = web_status_to_db_status(status)
         klass_id = int(klass_id)
         m = re.search(r'(\d+)/(\d+).*', enrollment)
         enrolled = int(m.group(1))
         capacity = int(m.group(2))
         # separate the time from the place
-        if time_and_place and re.search(r'\w', time_and_place):
-            m = re.search(
-                r'(\w+) (\d+(?::\d+)?(?:-\d+(?::\d+)?)?)#?(?: \((?:.*, *)*(.*?)\))?',
-                time_and_place)
+
+        if DEBUG_PRINT:
+            print('Storing class with class id:', klass_id)
+            print('Class row fields:', [d.get_text() for d in row])
+
+        m = re.search(r'(\w+) +(\d+(?::\d+)?(?:-\d+(?::\d+)?)?) *#? *(?: *\((?:.*, *)*(.*?)\))?',
+                      time_and_place) if time_and_place else None
+        if m:
             day = web_day_to_int_day(m.group(1))
             time = m.group(2)
             if '-' in time:
@@ -111,7 +116,7 @@ def scrape_dept(dept_id, name, page):
         data = row.find_all('td')
         if data[0].get('class', [''])[0] == 'cucourse':
             # row is the code and name of a course
-            row_course_id = data[0].b.string[4:8]
+            row_course_id = data[0].b.get_text()[4:8]
             if row_course_id == course_id:
                 # every now and again we get multiple title rows for the same course
                 continue
@@ -121,7 +126,7 @@ def scrape_dept(dept_id, name, page):
                 scrape_course_and_classes(course_id, dept_id, name, klasses)
                 klasses = []
             course_id = row_course_id
-            name = data[1].string
+            name = data[1].get_text()
         elif row.get('class', [''])[0] == 'rowHighlight' or row.get('class', [''])[0] == 'rowLowlight':
             # row is info about a class
             klasses.append(data)
@@ -153,7 +158,7 @@ def update_classes():
             links = data[:3]
             dept_info = data[3:]
             links = [d.a['href'] if d.a is not None else None for d in links]
-            dept_id, name = (d.string for d in dept_info)
+            dept_id, name = (d.get_text() for d in dept_info)
             link = links[CURRENT_SEM]
             # check if the department runs in the current semester
             if link is not None:

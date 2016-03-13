@@ -5,6 +5,7 @@ from __future__ import (
 
 import re
 
+from flask import g
 from sqlalchemy.sql import exists
 
 from constants import (
@@ -18,6 +19,7 @@ from constants import (
     STATUS_STOPPED,
     STATUS_TENTATIVE,
 )
+from models import Klass
 
 web_status_to_db_status_dict = {'open': STATUS_OPEN,
                                 'full': STATUS_FULL,
@@ -96,13 +98,9 @@ def contact_type_description(contact_type):
 
 
 def validate_klass_id(klass_id):
-    try:
-        klass_id = int(klass_id)
-    except ValueError:
-        # TODO: render form again with error (unless I do the class picker fast)
-        raise Exception
+    klass_id = int(klass_id)
     if not g.db.query(exists().where(Klass.klass_id == klass_id)).scalar():
-        raise Exception
+        raise KeyError
     return klass_id
 
 

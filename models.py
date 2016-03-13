@@ -26,11 +26,6 @@ from contact import (
     send_yo,
 )
 from dbhelper import Base
-from util import (
-    db_status_to_text_status,
-    int_day_to_text_day,
-    seconds_since_midnight_to_hour_of_day,
-)
 
 
 class Alert(Base):
@@ -102,15 +97,7 @@ class Course(Base):
         d = {'course_id': self.compound_id,
              'course_name': self.name}
         if with_classes:
-            d['classes'] = [{'class_id': klass.klass_id,
-                             'type': klass.klass_type,
-                             'day': int_day_to_text_day(klass.day),
-                             'start_time': seconds_since_midnight_to_hour_of_day(klass.start_time),
-                             'end_time': seconds_since_midnight_to_hour_of_day(klass.end_time),
-                             'location': klass.location,
-                             'status': db_status_to_text_status(klass.status),
-                             'enrolled': klass.enrolled,
-                             'capacity': klass.capacity} for klass in sorted(
+            d['classes'] = [klass.to_dict() for klass in sorted(
                 sorted(self.klasses, key=lambda c: c.day),
                 key=lambda c: c.klass_type)]
         return d
@@ -145,3 +132,19 @@ class Klass(Base):
     def __repr__(self):
         return "<Klass(klass_id='%d', dept_id='%s', course_id='%s', klass_type='%s')>" % (
             self.klass_id, self.dept_id, self.course_id, self.klass_type)
+
+    def to_dict(self):
+        from util import (
+            db_status_to_text_status,
+            int_day_to_text_day,
+            seconds_since_midnight_to_hour_of_day,
+        )
+        return {'class_id': self.klass_id,
+                'type': self.klass_type,
+                'day': int_day_to_text_day(self.day),
+                'start_time': seconds_since_midnight_to_hour_of_day(self.start_time),
+                'end_time': seconds_since_midnight_to_hour_of_day(self.end_time),
+                'location': self.location,
+                'status': db_status_to_text_status(self.status),
+                'enrolled': self.enrolled,
+                'capacity': self.capacity}

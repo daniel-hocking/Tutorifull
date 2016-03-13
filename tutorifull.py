@@ -3,6 +3,7 @@ from __future__ import (
     print_function,
 )
 
+from collections import defaultdict
 import json
 
 from flask import (
@@ -31,11 +32,11 @@ from dbhelper import (
 from models import (
     Alert,
     Course,
+    Klass,
 )
 from util import (
     contact_type_description,
     validate_course_id,
-    validate_klass_id,
 )
 
 app = Flask(__name__)
@@ -57,32 +58,46 @@ def teardown_request(exception):
         db.close()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def homepage():
-    if request.method == 'POST':
-        # get info from the form
-        klass_id = validate_klass_id(request.form['klassid'])
-        if request.form['email']:
-            contact = request.form['email']
-            contact_type = CONTACT_TYPE_EMAIL
-        elif request.form['phonenumber']:
-            contact = request.form['phonenumber']
-            contact_type = CONTACT_TYPE_SMS
-        elif request.form['yoname']:
-            contact = request.form['yoname']
-            contact_type = CONTACT_TYPE_YO
-        else:
-            abort(500)  # TODO: render homepage with error
-        # insert the fact that they want to be notified into the db
-        alert = Alert(klass_id=klass_id, contact_type=contact_type, contact=contact)
-        g.db.add(alert)
-        return render_template('success.html',
-                               contact_type=contact_type_description(contact_type),
-                               contact=contact)
     return render_template('homepage.html')
 
 
-@app.route('/api/course', methods=['GET'])
+@app.route('/alerts', methods=['POST'])
+def save_alerts():
+    # get info from the form
+    post_data = request.get_json()
+    if post_data.get('email'):
+        contact = post_data['email']
+        contact_type = CONTACT_TYPE_EMAIL
+    elif post_data.get('phonenumber'):
+        contact = post_data['phonenumber']
+        contact_type = CONTACT_TYPE_SMS
+    elif post_data.get('yoname'):
+        contact = post_data['yoname']
+        contact_type = CONTACT_TYPE_YO
+    else:
+        abort(500)  # TODO: render homepage with error
+
+    courses_dict = defaultdict(list)
+    for klass_id in post_data.get('classids', []):
+        #klass_id = validate_klass_id(klass_id)
+        klass = g.db.query(Klass).filter_by(klass_id=klass_id).one()
+        # insert the fact that they want to be notified into the db
+        alert = Alert(klass_id=klass_id, contact_type=contact_type, contact=contact)
+        g.db.add(alert)
+
+        courses_dict[klass.course.compound_id].append(klass.to_dict())
+
+    courses = [{'course_id': course_id, 'classes': classes} for course_id, classes in sorted(courses_dict.iteritems())]
+
+    return render_template('success.html',
+                           contact_type=contact_type_description(contact_type),
+                           contact=contact,
+                           courses=courses)
+
+
+@app.route('/courses', methods=['GET'])
 def search_courses():
     search_query = '%' + request.args.get('q', '') + '%'
     courses = g.db.query(Course).filter(or_(Course.name.like(search_query),
@@ -91,7 +106,7 @@ def search_courses():
     return json.dumps(courses)
 
 
-@app.route('/api/course/<course_id>', methods=['GET'])
+@app.route('/courses/<course_id>', methods=['GET'])
 def course_info(course_id):
     course_id = course_id.upper()
     dept_id, course_id = validate_course_id(course_id)
