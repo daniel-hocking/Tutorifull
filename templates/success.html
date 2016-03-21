@@ -10,52 +10,55 @@
         <title>Tutorifull</title>
     </head>
     <body>
-        <div class="title-header row row-centered row-vert-centered">
-            <h1>Tutorifull</h1>
-        </div>
-        <div class="main-content">
-            <div class="row">
-                <div class="text-box">
-                    We'll send you {{ contact_type }} to {{ contact }} when a spot opens up.
-                </div>
+        <div class="page-column column cross-centered">
+            <div class="title-header row justify-centered cross-centered">
+                <h1>Tutorifull</h1>
             </div>
-
-            <div class="confirm-classes success-confirm-classes">
-                {% for course in courses %}
-                    <div class="course-classes">
-                        <div class="course-classes-title">
-                            {{ course.course_id }}
-                        </div>
-                        <div>
-                            {% for class in course.classes %}
-                                <div class="class-infos row selected">
-                                    <div class="class-info class-type">
-                                        {{ class.type }}
-                                    </div>
-                                    <div class="class-info class-time">
-                                        {{ class.day }} {{ class.start_time }}-{{ class.end_time }}
-                                    </div>
-                                    <div class="class-info class-location">
-                                        {{ class.location }}
-                                    </div>
-                                    <div class="class-info class-status">
-                                        {{ class.status }}
-                                    </div>
-                                    <div class="class-info class-enrolled">
-                                        {{ class.enrolled }}/{{ class.capacity }}
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+            <div class="main-content">
+                <div class="row">
+                    <div class="text-box">
+                        We'll send you {{ contact_type }} to {{ contact }} when a spot opens up.
                     </div>
-                {% endfor %}
-            </div>
-
-            <footer>
-                <div class="row row-centered">
-                    <div>Made by a Dome</div>
                 </div>
-            </footer>
+
+                <div class="confirm-classes success-confirm-classes">
+                    {% for course in courses %}
+                        <table class="course-table">
+                            <caption class="course-table-title">
+                                {{ course.course_id }}
+                            </caption>
+                            {% for class in course.classes %}
+                                <tr class="class-table-row row selected">
+                                    <td class="class-table-data class-type" data-type="{{ class.type }}">
+                                        {{ class.type }}
+                                    </td>
+                                    <td class="class-table-data class-time" data-day="{{ class.day }}" data-start-time="{{ class.start_time }}" data-end-time="{{ class.end_time }}">
+                                        {% if class.day and class.start_time and class.end_time %}
+                                            {{ class.day }} {{ class.start_time }}-{{ class.end_time }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="class-table-data class-location" data-location="{{ class.location }}">
+                                        {% if class.location %}
+                                            {{ class.location }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="class-table-data class-status" data-status="{{ class.status }}">
+                                        {{ class.status }}
+                                    </td>
+                                    <td class="class-table-data class-enrolled {% if class.percentage == 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
+                                        {{ class.enrolled }}/{{ class.capacity }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
+        <footer>
+            <div class="row justify-centered">
+                <div>Made by a Dome</div>
+            </div>
+        </footer>
     </body>
 </html>

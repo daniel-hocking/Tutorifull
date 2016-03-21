@@ -68,28 +68,31 @@ def save_alerts():
     # get info from the form
     post_data = request.get_json()
     if post_data.get('email'):
-        contact = post_data['email']
+        contact = post_data['email'].lower()
         contact_type = CONTACT_TYPE_EMAIL
     elif post_data.get('phonenumber'):
         contact = post_data['phonenumber']
         contact_type = CONTACT_TYPE_SMS
     elif post_data.get('yoname'):
-        contact = post_data['yoname']
+        contact = post_data['yoname'].upper()
         contact_type = CONTACT_TYPE_YO
     else:
         abort(500)  # TODO: render homepage with error
 
     courses_dict = defaultdict(list)
     for klass_id in post_data.get('classids', []):
-        #klass_id = validate_klass_id(klass_id)
+        # klass_id = validate_klass_id(klass_id)
+        # TODO: check giving this strings/non-existant ids
         klass = g.db.query(Klass).filter_by(klass_id=klass_id).one()
         # insert the fact that they want to be notified into the db
         alert = Alert(klass_id=klass_id, contact_type=contact_type, contact=contact)
         g.db.add(alert)
 
-        courses_dict[klass.course.compound_id].append(klass.to_dict())
+        courses_dict[klass.course.compound_id].append(klass)
 
-    courses = [{'course_id': course_id, 'classes': classes} for course_id, classes in sorted(courses_dict.iteritems())]
+    courses = [{'course_id': course_id,
+                'classes': [c.to_dict() for c in sorted(classes, key=lambda c: (c.klass_type, c.day, c.start_time))]}
+               for course_id, classes in sorted(courses_dict.iteritems())]
 
     return render_template('success.html',
                            contact_type=contact_type_description(contact_type),

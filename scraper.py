@@ -3,14 +3,15 @@ from __future__ import (
     print_function,
 )
 
+from collections import defaultdict
 import re
-import sys
 
 from bs4 import BeautifulSoup
 import requests
 
 from config import DATABASE
 from constants import CURRENT_SEM
+from contact import send_alerts
 from dbhelper import (
     connect_db,
     init_db,
@@ -173,10 +174,16 @@ def update_classes():
 
 
 def check_alerts():
+    triggered_alerts = []
     for alert in db.query(Alert):
-        alert.alert(db)
+        if alert.should_alert():
+            triggered_alerts.append(alert)
+            db.delete(alert)
+
+    send_alerts(triggered_alerts)
+
     db.commit()
 
 
-update_classes()
+# update_classes()
 check_alerts()

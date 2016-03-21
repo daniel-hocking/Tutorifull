@@ -1,3 +1,18 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-color: #e9eaed;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    color: #404040;
+    line-height: 1.2;
+    flex-direction: column;
+}
+
 h1 {
     margin: 0;
     font-size: 2em;
@@ -9,12 +24,21 @@ h2 {
     font-weight: bold;
 }
 
-body {
-    margin: 0;
-    background-color: #e9eaed;
-    font-family: 'Montserrat', sans-serif;
-    color: #404040;
-    line-height: 1.2;
+table {
+    width: 100%;
+}
+
+caption {
+    text-align: left;
+}
+
+.page-column {
+    margin-bottom: -100px;
+}
+.page-column:after {
+  content: "";
+  display: block;
+  height: 100px;
 }
 
 .title-header {
@@ -32,7 +56,6 @@ body {
 
 .main-content {
     width: 85%;
-    margin: auto;
 }
 
 @media only screen and (min-width:1000px) {
@@ -134,42 +157,45 @@ body {
     background-color: #7ac18a;
 }
 
-.course-classes-title {
+.course-table-title {
     margin-left: 10px;
     color: #a9a9a9;
 }
-.class-infos {
-    padding: 15px 0 15px 0;
+.class-table-row {
     background-color: #ffffff;
     transition: background-color 0.1s;
     border: 1px solid #dbdee4;
     border-bottom: 0px;
     cursor: pointer;
 }
-.class-infos:first-child {
+.class-table-row:first-of-type {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-.class-infos:last-child {
+.class-table-row:last-child {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     border-bottom: 1px solid #dbdee4;
 }
-.class-infos:nth-child(even) {
+.class-table-row:nth-child(even) {
     background-color: #f7f7f7;
 }
-.class-infos:hover {
-    background-color: #8ed69e;
+.class-table-row:hover {
+    background-color: #ceffd8;
 }
-.class-infos.selected {
+.class-table-row.selected {
+    background-color: #85ce95;
+}
+.class-table-row.selected:nth-child(even) {
     background-color: #7ac18a;
 }
-.class-info {
+.class-table-data {
+    padding: 15px 0 15px 0;
     border-right: 1px solid #dbdee4;
     text-align: center;
     pointer-events: none;
 }
-.class-info:last-child {
+.class-table-data:last-child {
     border-right: 0;
 }
 .class-type {
@@ -181,8 +207,18 @@ body {
 .class-enrolled {
     width: 40%;
 }
+.class-enrolled.full {
+    color: #e60000;
+}
+.class-enrolled.almost-full {
+    color: #ef7200;
+}
 .class-status {
+    color: #e60000;
     display: none;
+}
+.class-status[data-status='Open'] {
+    color: #404040;
 }
 .class-location {
     display: none;
@@ -217,6 +253,11 @@ body {
     font-size: 16px;
     font-family: 'Montserrat', sans-serif;
 }
+@media only screen and (min-width:550px) {
+    .contact-input-box {
+        width: 60%;
+    }
+}
 .email-icon {
     background-image: url("email.png");
 }
@@ -233,17 +274,14 @@ body {
     text-align: center;
 }
 
-.confirm-classes .course-classes {
+.confirm-classes .course-table {
     margin-top: 20px;
-}
-.confirm-classes .course-classes:first-child {
-    margin-top: 0;
 }
 
 .success-confirm-classes {
     margin-top: 40px;
 }
-.success-confirm-classes .class-infos {
+.success-confirm-classes .class-table-row {
     cursor: default;
 }
 
@@ -261,6 +299,7 @@ body {
 }
 
 footer {
-    margin: 60px 0 20px 0;
+    height: 100px;
+    padding-top: 60px;
     color: #a9a9a9;
 }

@@ -15,19 +15,29 @@
     display: -webkit-flex;
     display: flex;
 }
-.row-end {
+.column {
+    min-height: 100%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+}
+
+.justify-end {
     justify-content: flex-end;
 }
-.row-centered {
+.justify-centered {
     justify-content: center;
 }
-.row-space-between {
+.justify-space-between {
     justify-content: space-between;
 }
-.row-space-around {
+.justify-space-around {
     justify-content: space-around;
 }
-.row-vert-centered {
+.cross-centered {
     align-items: center;
 }
 

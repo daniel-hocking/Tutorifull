@@ -15,16 +15,6 @@ from sqlalchemy.orm import (
     column_property,
 )
 
-from constants import (
-    CONTACT_TYPE_EMAIL,
-    CONTACT_TYPE_SMS,
-    CONTACT_TYPE_YO,
-)
-from contact import (
-    send_email,
-    send_sms,
-    send_yo,
-)
 from dbhelper import Base
 
 
@@ -43,21 +33,10 @@ class Alert(Base):
         return "<Alert(alert_id='%d', klass_id='%d', contact_type='%s', contact='%s')>" % (
             self.alert_id, self.klass_id, self.contact_type, self.contact)
 
-    @property
-    def under_capacity(self):
+    def should_alert(self):
         if self.klass.enrolled < self.klass.capacity:
             return True
         return False
-
-    def alert(self, db):
-        if self.under_capacity:
-            if self.contact_type == CONTACT_TYPE_EMAIL:
-                send_email(self.contact, self.klass)
-            elif self.contact_type == CONTACT_TYPE_SMS:
-                send_sms(self.contact, self.klass)
-            elif self.contact_type == CONTACT_TYPE_YO:
-                send_yo(self.contact, self.klass)
-            db.delete(self)
 
 
 class Dept(Base):
@@ -97,9 +76,7 @@ class Course(Base):
         d = {'course_id': self.compound_id,
              'course_name': self.name}
         if with_classes:
-            d['classes'] = [klass.to_dict() for klass in sorted(
-                sorted(self.klasses, key=lambda c: c.day),
-                key=lambda c: c.klass_type)]
+            d['classes'] = [klass.to_dict() for klass in sorted(self.klasses, key=lambda c: (c.klass_type, c.day))]
         return d
 
 
@@ -147,4 +124,5 @@ class Klass(Base):
                 'location': self.location,
                 'status': db_status_to_text_status(self.status),
                 'enrolled': self.enrolled,
-                'capacity': self.capacity}
+                'capacity': self.capacity,
+                'percentage': int((float(self.enrolled) / self.capacity) * 100)}

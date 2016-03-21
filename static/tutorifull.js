@@ -3,12 +3,12 @@ var courseSearchResults = document.getElementsByClassName('course-search-results
 var classSearchResults = document.getElementsByClassName('class-search-results')[0];
 var contactInputs = document.getElementsByClassName('contact-input-box');
 var confirmClasses = document.getElementsByClassName('confirm-classes')[0];
-var searchedClassElements = new Map(); // classes under the select step
-var selectedCourseElements = new Map(); // courses under the confirm step
-var selectedClassElements = new Map(); // classes under the confirm step
-
+var searchedClassRows = new Map(); // classes under the select step
+var selectedCourseTables = new Map(); // courses under the confirm step
+var selectedClassRows = new Map(); // classes under the confirm step
 
 function createElement(type, klass) {
+    // helper function that creates a DOM element of a certain type with the given classes
     var element = document.createElement(type);
     if (klass) {
         element.className = klass;
@@ -16,8 +16,8 @@ function createElement(type, klass) {
     return element;
 }
 
-function httpGetAsync(theUrl, callback)
-{
+function httpGetAsync(theUrl, callback) {
+    // helper function that does an async get request
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
@@ -29,8 +29,8 @@ function httpGetAsync(theUrl, callback)
 
 // onkeyup handler for searchbar
 searchBox.onkeyup = searchCourses;
-
 function searchCourses() {
+    // gets the courses matching the test in the search bar
     var query = this.value;
     if (query == '') {
         courseSearchResults.innerHTML = '';
@@ -41,141 +41,154 @@ function searchCourses() {
 
 // onclick handler for searchbar
 searchBox.onclick = onSearchBoxClick;
-
 function onSearchBoxClick() {
+    // when you click on the search box, all the text gets selected
     this.setSelectionRange(0, this.value.length);
 }
 
 function courseSearchResultsCallback(results) {
+    // shows the search results under the search bar
     var results = JSON.parse(results);
     courseSearchResults.innerHTML = '';
     // adding all the course search results to the dropdown under the searchbar
     results.forEach(function(result) {
-        var resultElement = createElement('li', 'course-search-result');
-        resultElement.textContent = result.course_id + ' - ' + result.course_name;
-        resultElement.dataset.courseId = result.course_id;
-        resultElement.onclick = onCourseSearchResultClick;
-        courseSearchResults.appendChild(resultElement);
+        var resultItem = createElement('li', 'course-search-result');
+        resultItem.textContent = result.course_id + ' - ' + result.course_name;
+        resultItem.dataset.courseId = result.course_id;
+        resultItem.onclick = onCourseSearchResultClick;
+        courseSearchResults.appendChild(resultItem);
     });
 }
 
 function onCourseSearchResultClick() {
+    // clicking a course search result
     httpGetAsync('/courses/' + this.dataset.courseId, classSearchResultsCallback);
     courseSearchResults.innerHTML = '';
     searchBox.value = this.textContent;
 }
 
 function classSearchResultsCallback(course) {
+    // shows all the classes from the selected course
     var course = JSON.parse(course);
     classSearchResults.innerHTML = '';
-    searchedClassElements.clear();
-    var courseClasses = createElement('div', 'course-classes');
+    searchedClassRows.clear();
 
-    var courseClassesTitle = createElement('div', 'course-classes-title');
-    courseClassesTitle.textContent = course.course_id;
-    courseClasses.appendChild(courseClassesTitle);
+    var courseTable = createElement('table', 'course-table');
 
-    var courseClassesContainer = createElement('div');
+    var courseTableTitle = createElement('caption', 'course-table-title');
+    courseTableTitle.textContent = course.course_id;
+    courseTable.appendChild(courseTableTitle);
 
     // adding all the classes to the class search results list
     course.classes.forEach(function(klass) {
-        var classInfos = createElement('div', 'class-infos row');
-        classInfos.dataset.classId = klass.class_id;
-        classInfos.dataset.courseId = course.course_id;
-        if (selectedClassElements.has(classInfos.dataset.classId)) {
-            classInfos.className = 'class-infos row selected';
+        var classTableRow = createElement('tr', 'class-table-row row');
+        classTableRow.dataset.classId = klass.class_id;
+        classTableRow.dataset.courseId = course.course_id;
+        if (selectedClassRows.has(classTableRow.dataset.classId)) {
+            classTableRow.className = 'class-table-row row selected';
         }
-        classInfos.onclick = onSearchedClassInfosClick;
+        classTableRow.onclick = onSearchedClassClick;
 
-        var classType = createElement('div', 'class-info class-type');
+        var classType = createElement('td', 'class-table-data class-type');
         classType.textContent = klass.type;
-        classInfos.appendChild(classType);
+        classType.dataset.type = klass.type;
+        classTableRow.appendChild(classType);
 
-        var classTime = createElement('div', 'class-info class-time');
+        var classTime = createElement('td', 'class-table-data class-time');
         if (klass.day != null) {
             classTime.textContent = klass.day + ' ' + klass.start_time + '-' + klass.end_time;
+            classType.dataset.day = klass.day;
+            classType.dataset.startTime = klass.start_time;
+            classType.dataset.endTime = klass.end_time;
         }
-        classInfos.appendChild(classTime);
+        classTableRow.appendChild(classTime);
 
-        var classLocation = createElement('div', 'class-info class-location');
+        var classLocation = createElement('td', 'class-table-data class-location');
         classLocation.textContent = klass.location;
-        classInfos.appendChild(classLocation);
+        classLocation.dataset.location = klass.location;
+        classTableRow.appendChild(classLocation);
 
-        var classStatus = createElement('div', 'class-info class-status');
+        var classStatus = createElement('td', 'class-table-data class-status');
         classStatus.textContent = klass.status;
-        classInfos.appendChild(classStatus);
+        classStatus.dataset.status = klass.status;
+        classTableRow.appendChild(classStatus);
 
-        var classEnrolled = createElement('div', 'class-info class-enrolled');
+        var classEnrolled = createElement('td', 'class-table-data class-enrolled');
         classEnrolled.textContent = klass.enrolled + '/' + klass.capacity;
-        classInfos.appendChild(classEnrolled);
+        classEnrolled.dataset.enrolled = klass.enrolled;
+        classEnrolled.dataset.capacity = klass.capacity;
+        classEnrolled.dataset.percentage = klass.percentage;
+        console.log(klass);
+        if (klass.percentage == 100) {
+            classEnrolled.classList.add("full");
+        } else if (klass.percentage >= 80) {
+            classEnrolled.classList.add("almost-full");
+        }
+        classTableRow.appendChild(classEnrolled);
 
-        courseClassesContainer.appendChild(classInfos);
-        searchedClassElements.set(classInfos.dataset.classId, classInfos);
+        courseTable.appendChild(classTableRow);
+        searchedClassRows.set(classTableRow.dataset.classId, classTableRow);
     })
 
-    courseClasses.appendChild(courseClassesContainer);
-    classSearchResults.appendChild(courseClasses);
+    classSearchResults.appendChild(courseTable);
 }
 
-function checkSelectedCourseElementEmpty(courseId) {
-    var selectedCourseElement = selectedCourseElements.get(courseId);
-    var courseClassesContainer = selectedCourseElement.getElementsByTagName('div')[1];
-    if (courseClassesContainer.children.length == 0) {
-        selectedCourseElements.delete(courseId);
-        selectedCourseElement.remove();
+function checkSelectedCourseTableEmpty(courseId) {
+    // checks if the table showing selected classes in a course is empty
+    var selectedCourseTable = selectedCourseTables.get(courseId);
+    if (selectedCourseTable.getElementsByTagName('tr').length == 0) {
+        selectedCourseTables.delete(courseId);
+        selectedCourseTable.remove();
     }
 }
 
-function onSearchedClassInfosClick() {
+function onSearchedClassClick() {
+    // clicking a class search result
     this.classList.toggle("selected");
-    if (selectedClassElements.has(this.dataset.classId)) {
+    if (selectedClassRows.has(this.dataset.classId)) {
         // unselecting a class search result
-        selectedClassElements.get(this.dataset.classId).remove();
-        checkSelectedCourseElementEmpty(this.dataset.courseId);
-        selectedClassElements.delete(this.dataset.classId);
+        selectedClassRows.get(this.dataset.classId).remove();
+        checkSelectedCourseTableEmpty(this.dataset.courseId);
+        selectedClassRows.delete(this.dataset.classId);
     } else {
         // selecting a class search result
 
         // selecting the first class, remove the default message
-        if (selectedClassElements.size == 0) {
+        if (selectedClassRows.size == 0) {
             confirmClasses.innerHTML = '';
         }
 
-        selectedClassElements.set(this.dataset.classId, this);
-        var selectedCourseElement;
-        if (selectedCourseElements.has(this.dataset.courseId)) {
+        selectedClassRows.set(this.dataset.classId, this);
+        var selectedCourseTable;
+        if (selectedCourseTables.has(this.dataset.courseId)) {
             // selecting a class from a course that already has some other selected classes
-            selectedCourseElement = selectedCourseElements.get(this.dataset.courseId);
+            selectedCourseTable = selectedCourseTables.get(this.dataset.courseId);
         } else {
             // selecting a class from a course that has no other already selected classes
-            selectedCourseElement = createElement('div', 'course-classes');
-            selectedCourseElements.set(this.dataset.courseId, selectedCourseElement);
+            selectedCourseTable = createElement('table', 'course-table');
+            selectedCourseTables.set(this.dataset.courseId, selectedCourseTable);
 
-            var courseClassesTitle = createElement('div', 'course-classes-title');
-            courseClassesTitle.textContent = this.dataset.courseId;
-            selectedCourseElement.appendChild(courseClassesTitle);
+            var courseTableTitle = createElement('caption', 'course-table-title');
+            courseTableTitle.textContent = this.dataset.courseId;
+            selectedCourseTable.appendChild(courseTableTitle);
 
-            var courseClassesContainer = createElement('div');
-            selectedCourseElement.appendChild(courseClassesContainer);
-
-            confirmClasses.appendChild(selectedCourseElement);
+            confirmClasses.appendChild(selectedCourseTable);
         }
 
-        var courseClassesContainer = selectedCourseElement.getElementsByTagName('div')[1];
-        var selectedClassElement = this.cloneNode(deep=true);
-        selectedClassElement.onclick = onSelectedClassInfosClick;
-        courseClassesContainer.appendChild(selectedClassElement);
-        selectedClassElements.set(this.dataset.classId, selectedClassElement);
+        var selectedClassRow = this.cloneNode(deep=true);
+        selectedClassRow.onclick = onSelectedClassClick;
+        selectedCourseTable.appendChild(selectedClassRow);
+        selectedClassRows.set(this.dataset.classId, selectedClassRow);
     }
 }
 
-function onSelectedClassInfosClick() {
+function onSelectedClassClick() {
     // removing a selected class from the confirm list
     this.remove();
-    checkSelectedCourseElementEmpty(this.dataset.courseId);
-    selectedClassElements.delete(this.dataset.classId);
-    if (searchedClassElements.has(this.dataset.classId)) {
-        searchedClassElements.get(this.dataset.classId).classList.toggle("selected");
+    checkSelectedCourseTableEmpty(this.dataset.courseId);
+    selectedClassRows.delete(this.dataset.classId);
+    if (searchedClassRows.has(this.dataset.classId)) {
+        searchedClassRows.get(this.dataset.classId).classList.toggle("selected");
     }
 }
 
@@ -187,7 +200,6 @@ Array.prototype.forEach.call(contactInputs,
                                  contactInput.onkeyup = clearOtherContactInputs;
                              }
 );
-
 function clearOtherContactInputs() {
     var chosenInput = this;
     Array.prototype.forEach.call(contactInputs,
@@ -210,7 +222,7 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
                                      }
                                  }
     );
-    postData.classids = Array.from(selectedClassElements.keys());
+    postData.classids = Array.from(selectedClassRows.keys());
 
     var xhr = new XMLHttpRequest();
     xhr.open('post', '/alerts', true);
@@ -221,5 +233,6 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
 
     xhr.onloadend = function (response) {
         document.write(response.target.response);
+        window.scrollTo(0, 0);
     };
 }
