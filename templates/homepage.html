@@ -1,125 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-        <link rel="stylesheet" href={{ url_for('static', filename='css/tutorifull.min.css') }}>
-        <title>Tutorifull</title>
-    </head>
-    <body>
-        <div class="page-column column cross-centered">
-            <div class="title-header row justify-centered cross-centered">
-                <h1>Tutorifull</h1>
-            </div>
-            <div class="main-content">
-                <div class="row">
-                    <div class="text-box">
-                        Sometimes you miss out on enrolling in that class that's just
-                        perfect for you: late enough so you don't need 5 cups of coffee
-                        to survive it but early enough so you can still grab a kebab box
-                        from the Quad for lunch right afterwards. <br><br>Or maybe you just
-                        don't like climbing the Basser steps to get to your tute room.<br><br>
-                        With Tutorifull you can sign up to be alerted by email, text
-                        or Yo when a spot opens up in a full class.<br><br>
-                        Never settle for an 8am tute again.
-                    </div>
-                </div>
+{% extends "base.html" %}
 
-                <div class="step">
-                    <div class="row justify-centered">
-                        <div class="step-circle row justify-centered cross-centered">
-                            <div>1</div>
-                        </div>
-                    </div>
-                    <div class="row justify-centered">
-                        <div class="row justify-centered cross-centered">
-                            <h2 class="step-title">Find Classes</h2>
-                        </div>
-                    </div>
-                </div>
+{% block body %}
+<div class="row">
+    <div class="text-box">
+        Sometimes you miss out on enrolling in that class that's just
+        perfect for you: late enough so you don't need 5 cups of coffee
+        to survive it but early enough so you can still grab a kebab box
+        from the Quad for lunch right afterwards. <br><br>Or maybe you just
+        don't like climbing the Basser steps to get to your tute room.<br><br>
+        With Tutorifull you can sign up to be alerted by email, SMS
+        or Yo when a spot opens up in a full class.<br><br>
+        Never settle for an 8am tute again.
+    </div>
+</div>
 
-                <div class="search-parent">
-                    <div class="icon search-icon"></div>
-                    <input class="search-box" type="text" name="coursesearch" placeholder="Search for a course"></input>
-                    <ul class="course-search-results"></ul>
-                </div>
-
-                <div class="step">
-                    <div class="row justify-centered">
-                        <div class="step-circle row justify-centered cross-centered">
-                            <div>2</div>
-                        </div>
-                    </div>
-                    <div class="row justify-centered">
-                        <div class="row justify-centered cross-centered">
-                            <h2 class="step-title">Select Classes</h2>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="class-search-results">
-                    <div class="text-box">
-                        Search for a course above
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="row justify-centered">
-                        <div class="step-circle row justify-centered cross-centered">
-                            <div>3</div>
-                        </div>
-                    </div>
-                    <div class="row justify-centered">
-                        <div class="row justify-centered cross-centered">
-                            <h2 class="step-title">Contact</h2>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row justify-centered">
-                    <div class="icon email-icon"></div>
-                    <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
-                </div>
-                    <div class="contact-or">or</div>
-                <div class="row justify-centered">
-                    <div class="icon sms-icon"></div>
-                    <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
-                </div>
-                    <div class="contact-or">or</div>
-                <div class="row justify-centered">
-                    <div class="icon yo-icon"></div>
-                    <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
-                </div>
-
-                <div class="step">
-                    <div class="row justify-centered">
-                        <div class="step-circle row justify-centered cross-centered">
-                            <div>4</div>
-                        </div>
-                    </div>
-                    <div class="row justify-centered">
-                        <div class="row justify-centered cross-centered">
-                            <h2 class="step-title">Confirm</h2>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="confirm-classes">
-                    <div class="text-box">
-                        Select some classes above
-                    </div>
-                </div>
-                <div class="row justify-centered">
-                    <input class="alert-me-button" type="submit" name="submit" value="Alert Me"></input>
-                </div>
-            </div>
+<div class="step">
+    <div class="row justify-centered">
+        <div class="step-circle row justify-centered cross-centered">
+            <div>1</div>
         </div>
-        <footer>
-            <div class="row justify-centered">
-                <div>Made by a Dome</div>
-            </div>
-        </footer>
-    <script type="text/javascript" src={{ url_for('static', filename='js/tutorifull.min.js') }}></script>
-    </body>
-</html>
+    </div>
+    <div class="row justify-centered">
+        <div class="row justify-centered cross-centered">
+            <h2 class="step-title">Find Classes</h2>
+        </div>
+    </div>
+</div>
+
+<div class="search-parent">
+    <div class="icon search-icon"></div>
+    <input class="search-box" type="text" name="coursesearch" placeholder="Search for a course"></input>
+    <ul class="course-search-results"></ul>
+</div>
+
+<div class="step">
+    <div class="row justify-centered">
+        <div class="step-circle row justify-centered cross-centered">
+            <div>2</div>
+        </div>
+    </div>
+    <div class="row justify-centered">
+        <div class="row justify-centered cross-centered">
+            <h2 class="step-title">Select Classes</h2>
+        </div>
+    </div>
+</div>
+
+<div class="class-search-results">
+    <div class="text-box">
+        Search for a course above
+    </div>
+</div>
+
+<div class="step">
+    <div class="row justify-centered">
+        <div class="step-circle row justify-centered cross-centered">
+            <div>3</div>
+        </div>
+    </div>
+    <div class="row justify-centered">
+        <div class="row justify-centered cross-centered">
+            <h2 class="step-title">Contact</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-centered">
+    <div class="icon email-icon"></div>
+    <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
+</div>
+    <div class="contact-or">or</div>
+<div class="row justify-centered">
+    <div class="icon sms-icon"></div>
+    <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
+</div>
+    <div class="contact-or">or</div>
+<div class="row justify-centered">
+    <div class="icon yo-icon"></div>
+    <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
+</div>
+
+<div class="step">
+    <div class="row justify-centered">
+        <div class="step-circle row justify-centered cross-centered">
+            <div>4</div>
+        </div>
+    </div>
+    <div class="row justify-centered">
+        <div class="row justify-centered cross-centered">
+            <h2 class="step-title">Confirm</h2>
+        </div>
+    </div>
+</div>
+
+<div class="confirm-classes">
+    <div class="text-box">
+        Select some classes above
+    </div>
+</div>
+<div class="row justify-centered">
+    <input class="alert-me-button" type="submit" name="submit" value="Alert Me"></input>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src={{ url_for('static', filename='js/tutorifull.min.js') }}></script>
+{% endblock %}
