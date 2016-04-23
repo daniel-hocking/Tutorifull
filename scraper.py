@@ -3,7 +3,6 @@ from __future__ import (
     print_function,
 )
 
-from collections import defaultdict
 import re
 
 from bs4 import BeautifulSoup
@@ -185,5 +184,5 @@ def check_alerts():
     db.commit()
 
 
-# update_classes()
+update_classes()
 check_alerts()

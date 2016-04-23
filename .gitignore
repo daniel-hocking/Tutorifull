@@ -1,4 +1,9 @@
 *.db
 *.pyc
-config.py
+
 venv/
+node_modules/
+css/build
+js/build
+
+config.py
