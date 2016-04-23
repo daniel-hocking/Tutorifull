@@ -89,12 +89,12 @@ function classSearchResultsCallback(course) {
         }
         classTableRow.onclick = onSearchedClassClick;
 
-        var classType = createElement('td', 'class-table-data class-type');
+        var classType = createElement('td', 'class-type');
         classType.textContent = klass.type;
         classType.dataset.type = klass.type;
         classTableRow.appendChild(classType);
 
-        var classTime = createElement('td', 'class-table-data class-time');
+        var classTime = createElement('td', 'class-time');
         if (klass.day != null) {
             classTime.textContent = klass.day + ' ' + klass.start_time + '-' + klass.end_time;
             classType.dataset.day = klass.day;
@@ -103,17 +103,17 @@ function classSearchResultsCallback(course) {
         }
         classTableRow.appendChild(classTime);
 
-        var classLocation = createElement('td', 'class-table-data class-location');
+        var classLocation = createElement('td', 'class-location');
         classLocation.textContent = klass.location;
         classLocation.dataset.location = klass.location;
         classTableRow.appendChild(classLocation);
 
-        var classStatus = createElement('td', 'class-table-data class-status');
+        var classStatus = createElement('td', 'class-status');
         classStatus.textContent = klass.status;
         classStatus.dataset.status = klass.status;
         classTableRow.appendChild(classStatus);
 
-        var classEnrolled = createElement('td', 'class-table-data class-enrolled');
+        var classEnrolled = createElement('td', 'class-enrolled');
         classEnrolled.textContent = klass.enrolled + '/' + klass.capacity;
         classEnrolled.dataset.enrolled = klass.enrolled;
         classEnrolled.dataset.capacity = klass.capacity;

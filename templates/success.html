@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<div class="confirm-classes success-confirm-classes">
+<div class="success-confirm-classes">
     {% for course in courses %}
         <table class="course-table">
             <caption class="course-table-title">
@@ -15,23 +15,23 @@
             </caption>
             {% for class in course.classes %}
                 <tr class="class-table-row row selected">
-                    <td class="class-table-data class-type" data-type="{{ class.type }}">
+                    <td class="class-type" data-type="{{ class.type }}">
                         {{ class.type }}
                     </td>
-                    <td class="class-table-data class-time" data-day="{{ class.day }}" data-start-time="{{ class.start_time }}" data-end-time="{{ class.end_time }}">
+                    <td class="class-time" data-day="{{ class.day }}" data-start-time="{{ class.start_time }}" data-end-time="{{ class.end_time }}">
                         {% if class.day and class.start_time and class.end_time %}
                             {{ class.day }} {{ class.start_time }}-{{ class.end_time }}
                         {% endif %}
                     </td>
-                    <td class="class-table-data class-location" data-location="{{ class.location }}">
+                    <td class="class-location" data-location="{{ class.location }}">
                         {% if class.location %}
                             {{ class.location }}
                         {% endif %}
                     </td>
-                    <td class="class-table-data class-status" data-status="{{ class.status }}">
+                    <td class="class-status" data-status="{{ class.status }}">
                         {{ class.status }}
                     </td>
-                    <td class="class-table-data class-enrolled {% if class.percentage == 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
+                    <td class="class-enrolled {% if class.percentage == 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
                         {{ class.enrolled }}/{{ class.capacity }}
                     </td>
                 </tr>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <link rel="stylesheet" href={{ url_for('static', filename='css/tutorifull.min.css') }}>
+        <title>Tutorifull</title>
+    </head>
+    <body>
+        <div class="page-column column cross-centered">
+            <div class="title-header row justify-centered cross-centered">
+                <h1>Tutorifull</h1>
+            </div>
+            <div class="main-content">
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+        <footer>
+            <div class="row justify-centered">
+                <div>Made by a Dome</div>
+            </div>
+        </footer>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>
