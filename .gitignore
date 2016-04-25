@@ -1,6 +1,13 @@
 *.db
 *.pyc
 *.wsgi
-config.py
-venv/
 
+.sass-cache/
+venv/
+node_modules/
+css/build
+js/build
+static/css
+static/js
+
+config.py
