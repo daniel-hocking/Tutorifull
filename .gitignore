@@ -1,4 +1,6 @@
 *.db
 *.pyc
+*.wsgi
 config.py
 venv/
+
