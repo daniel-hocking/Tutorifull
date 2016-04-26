@@ -10,10 +10,7 @@ import requests
 
 from constants import CURRENT_SEM
 from contact import send_alerts
-from dbhelper import (
-    db_session,
-    init_db,
-)
+from dbhelper import db_session
 from models import (
     Alert,
     Course,
@@ -27,8 +24,6 @@ from util import (
 )
 
 DEBUG_PRINT = False
-
-init_db()
 
 
 def scrape_course_and_classes(course_id, dept_id, name, klasses):
