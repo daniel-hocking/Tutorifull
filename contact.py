@@ -15,6 +15,8 @@ from constants import (
 
 
 def send_alerts(alerts):
+    # organizes the alerts by contact info then sends one alert per contact info
+
     klasses_by_contact = defaultdict(list)
 
     for alert in alerts:

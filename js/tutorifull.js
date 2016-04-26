@@ -35,7 +35,7 @@ function searchCourses() {
     if (query == '') {
         courseSearchResults.innerHTML = '';
     } else {
-        httpGetAsync('/courses?q=' + query, courseSearchResultsCallback);
+        httpGetAsync('/api/courses?q=' + query, courseSearchResultsCallback);
     }
 }
 
@@ -62,7 +62,7 @@ function courseSearchResultsCallback(results) {
 
 function onCourseSearchResultClick() {
     // clicking a course search result
-    httpGetAsync('/courses/' + this.dataset.courseId, classSearchResultsCallback);
+    httpGetAsync('/api/courses/' + this.dataset.courseId, classSearchResultsCallback);
     courseSearchResults.innerHTML = '';
     searchBox.value = this.textContent;
 }
@@ -225,7 +225,7 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     postData.classids = Array.from(selectedClassRows.keys());
 
     var xhr = new XMLHttpRequest();
-    xhr.open('post', '/alerts', true);
+    xhr.open('post', '/api/alerts', true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 
     // send the collected data as JSON

@@ -59,7 +59,7 @@ def homepage():
     return render_template('homepage.html')
 
 
-@app.route('/alerts', methods=['POST'])
+@app.route('/api/alerts', methods=['POST'])
 def save_alerts():
     # get info from the form
     post_data = request.get_json()
@@ -96,7 +96,7 @@ def save_alerts():
                            courses=courses)
 
 
-@app.route('/courses', methods=['GET'])
+@app.route('/api/courses', methods=['GET'])
 def search_courses():
     search_query = '%' + request.args.get('q', '') + '%'
     courses = g.db.query(Course).filter(or_(Course.name.like(search_query),
@@ -105,7 +105,7 @@ def search_courses():
     return json.dumps(courses)
 
 
-@app.route('/courses/<course_id>', methods=['GET'])
+@app.route('/api/courses/<course_id>', methods=['GET'])
 def course_info(course_id):
     course_id = course_id.upper()
     dept_id, course_id = validate_course_id(course_id)
