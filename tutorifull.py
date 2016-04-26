@@ -8,7 +8,6 @@ import json
 from flask import (
     abort,
     Flask,
-    g,
     render_template,
     request,
 )
@@ -20,10 +19,7 @@ from constants import (
     CONTACT_TYPE_YO,
     MAX_SEARCH_RESULTS,
 )
-from dbhelper import (
-    connect_db,
-    init_db,
-)
+from dbhelper import db_session
 from models import (
     Alert,
     Course,
@@ -38,20 +34,10 @@ from util import (
 app = Flask(__name__)
 app.config.from_object('config')
 
-init_db('sqlite:///' + app.config['DATABASE'])
 
-
-@app.before_request
-def before_request():
-    g.db = connect_db()
-
-
-@app.teardown_request
-def teardown_request(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.commit()
-        db.close()
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 @app.route('/', methods=['GET'])
@@ -65,7 +51,7 @@ def show_alert():
     klass_ids = klass_ids.split(',')
 
     # get course info from db
-    klasses = g.db.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
+    klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
     if not klasses:
         abort(500)  # TODO: render with error
 
@@ -92,13 +78,14 @@ def save_alerts():
 
     # get course info from db
     klass_ids = post_data.get('classids', [])
-    klasses = g.db.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
+    klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
     if not klasses:
         abort(500)  # TODO: render homepage with error
 
     for klass in klasses:
         alert = Alert(klass_id=klass.klass_id, contact_type=contact_type, contact=contact)
-        g.db.add(alert)
+        db_session.add(alert)
+    db_session.commit()
     courses = klasses_to_template_courses(klasses)
 
     return render_template('success.html',
@@ -110,8 +97,8 @@ def save_alerts():
 @app.route('/api/courses', methods=['GET'])
 def search_courses():
     search_query = '%' + request.args.get('q', '') + '%'
-    courses = g.db.query(Course).filter(or_(Course.name.like(search_query),
-                                            Course.compound_id.like(search_query))).limit(MAX_SEARCH_RESULTS).all()
+    courses = db_session.query(Course).filter(or_(Course.name.like(search_query),
+                                                  Course.compound_id.like(search_query))).limit(MAX_SEARCH_RESULTS).all()
     courses = [c.to_dict() for c in courses]
     return json.dumps(courses)
 
@@ -120,7 +107,7 @@ def search_courses():
 def course_info(course_id):
     course_id = course_id.upper()
     dept_id, course_id = validate_course_id(course_id)
-    course = g.db.query(Course).filter_by(dept_id=dept_id, course_id=course_id).one()
+    course = db_session.query(Course).filter_by(dept_id=dept_id, course_id=course_id).one()
     return json.dumps(course.to_dict(with_classes=True))
 
 

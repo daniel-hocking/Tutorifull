@@ -9,20 +9,22 @@ from sqlalchemy import (
 )
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+from config import DATABASE
+
+engine = create_engine('sqlite:///' + DATABASE)
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
 
 Base = declarative_base()
+Base.query = db_session.query_property()
 
 
-def init_db(path):
-    engine = create_engine(path)
+def init_db():
+    import models
     Base.metadata.create_all(engine)
-    global Session
-    Session = sessionmaker(bind=engine)
-
-
-def connect_db():
-    return Session()
 
 
 @event.listens_for(Engine, "connect")

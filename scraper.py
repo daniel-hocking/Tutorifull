@@ -8,11 +8,10 @@ import re
 from bs4 import BeautifulSoup
 import requests
 
-from config import DATABASE
 from constants import CURRENT_SEM
 from contact import send_alerts
 from dbhelper import (
-    connect_db,
+    db_session,
     init_db,
 )
 from models import (
@@ -29,18 +28,16 @@ from util import (
 
 DEBUG_PRINT = False
 
-init_db('sqlite:///' + DATABASE)
-
-db = connect_db()
+init_db()
 
 
 def scrape_course_and_classes(course_id, dept_id, name, klasses):
     '''scrape all the classes in a course'''
     # add the course to the db
     course = Course(course_id=course_id, dept_id=dept_id, name=name)
-    db.merge(course)
+    db_session.merge(course)
 
-    klasses_to_delete = {klass.klass_id: klass for klass in db.query(Klass)
+    klasses_to_delete = {klass.klass_id: klass for klass in db_session.query(Klass)
                          .filter_by(course_id=course_id, dept_id=dept_id)
                          .all()}
 
@@ -91,21 +88,21 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                       start_time=start_time,
                       end_time=end_time,
                       location=location)
-        db.merge(klass)
+        db_session.merge(klass)
         klasses_to_delete.pop(klass_id, None)
 
     for klass in klasses_to_delete.values():
         print(klass)
-        db.delete(klass)
+        db_session.delete(klass)
 
 
 def scrape_dept(dept_id, name, page):
     '''scrape all the courses in a department'''
     # add the dept to the db
     dept = Dept(dept_id=dept_id, name=name)
-    db.merge(dept)
+    db_session.merge(dept)
 
-    courses_to_delete = {course.compound_id_tuple: course for course in db.query(
+    courses_to_delete = {course.compound_id_tuple: course for course in db_session.query(
         Course).filter_by(dept_id=dept_id).all()}
 
     r = requests.get('http://classutil.unsw.edu.au/' + page)
@@ -136,13 +133,13 @@ def scrape_dept(dept_id, name, page):
 
     for course in courses_to_delete.values():
         print(course)
-        db.delete(course)
+        db_session.delete(course)
 
-    db.commit()
+    db_session.commit()
 
 
 def update_classes():
-    depts_to_delete = {dept.dept_id: dept for dept in db.query(Dept).all()}
+    depts_to_delete = {dept.dept_id: dept for dept in db_session.query(Dept).all()}
 
     r = requests.get('http://classutil.unsw.edu.au/')
     main_page = BeautifulSoup(r.text, 'html.parser')
@@ -167,21 +164,21 @@ def update_classes():
 
     for dept in depts_to_delete.values():
         print(dept)
-        db.delete(dept)
+        db_session.delete(dept)
 
-    db.commit()
+    db_session.commit()
 
 
 def check_alerts():
     triggered_alerts = []
-    for alert in db.query(Alert):
+    for alert in db_session.query(Alert):
         if alert.should_alert():
             triggered_alerts.append(alert)
-            db.delete(alert)
+            db_session.delete(alert)
 
     send_alerts(triggered_alerts)
 
-    db.commit()
+    db_session.commit()
 
 
 update_classes()
