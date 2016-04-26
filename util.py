@@ -4,6 +4,7 @@ from __future__ import (
 )
 
 import re
+from collections import defaultdict
 
 from flask import g
 from sqlalchemy.sql import exists
@@ -109,3 +110,14 @@ def validate_course_id(course_id):
         return course_id[:4], course_id[4:]
     else:
         raise Exception
+
+
+def klasses_to_template_courses(klasses):
+    courses_dict = defaultdict(list)
+    for klass in klasses:
+        courses_dict[klass.course.compound_id].append(klass)
+
+    courses = [{'course_id': course_id,
+                'classes': [c.to_dict() for c in sorted(classes, key=lambda c: (c.klass_type, c.day, c.start_time))]}
+               for course_id, classes in sorted(courses_dict.iteritems())]
+    return courses
