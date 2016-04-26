@@ -75,17 +75,17 @@ function classSearchResultsCallback(course) {
 
     var courseTable = createElement('table', 'course-table');
 
-    var courseTableTitle = createElement('caption', 'course-table-title');
+    var courseTableTitle = createElement('caption');
     courseTableTitle.textContent = course.course_id;
     courseTable.appendChild(courseTableTitle);
 
     // adding all the classes to the class search results list
     course.classes.forEach(function(klass) {
-        var classTableRow = createElement('tr', 'class-table-row row');
+        var classTableRow = createElement('tr', 'row');
         classTableRow.dataset.classId = klass.class_id;
         classTableRow.dataset.courseId = course.course_id;
         if (selectedClassRows.has(classTableRow.dataset.classId)) {
-            classTableRow.className = 'class-table-row row selected';
+            classTableRow.className = 'row selected';
         }
         classTableRow.onclick = onSearchedClassClick;
 
@@ -168,7 +168,7 @@ function onSearchedClassClick() {
             selectedCourseTable = createElement('table', 'course-table');
             selectedCourseTables.set(this.dataset.courseId, selectedCourseTable);
 
-            var courseTableTitle = createElement('caption', 'course-table-title');
+            var courseTableTitle = createElement('caption');
             courseTableTitle.textContent = this.dataset.courseId;
             selectedCourseTable.appendChild(courseTableTitle);
 

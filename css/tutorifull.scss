@@ -80,10 +80,7 @@ caption {
 .main-content {
     width: 85%;
     margin-top: 20px;
-}
-
-@media only screen and (min-width:$breakpoint-mid) {
-    .main-content {
+    @media only screen and (min-width:$breakpoint-mid) {
         width: $breakpoint-mid * 0.85;
     }
 }
@@ -146,6 +143,9 @@ caption {
 .course-search-results {
     position: absolute;
     width: 100%;
+    @media only screen and (min-width:$breakpoint-mid) {
+        width: $breakpoint-mid * 0.85;
+    }
 }
 .course-search-results::after {
     content: '';
@@ -158,11 +158,6 @@ caption {
     z-index: -1;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-}
-@media only screen and (min-width:$breakpoint-mid) {
-    .course-search-results {
-        width: $breakpoint-mid * 0.85;
-    }
 }
 .course-search-result {
     padding: 15px;
@@ -184,104 +179,122 @@ caption {
     background-color: $light-green;
 }
 
-.course-table-title {
-    margin-left: 10px;
-    color: $on-background-font-color;
-}
-.class-table-row {
-    background-color: $table-light-color;
-    transition: background-color 0.1s;
-    border: 1px solid $box-border-color;
-    border-bottom: 0px;
-    cursor: pointer;
-}
-.class-table-row:first-of-type {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-.class-table-row:last-of-type {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-bottom: 1px solid $box-border-color;
-}
-.class-table-row:nth-child(even) {
-    background-color: $table-dark-color;
-}
-.class-table-row:hover {
-    background-color: $table-hover-color;
-}
-.class-table-row.selected {
-    background-color: $table-selected-dark-color;
-}
-.class-table-row.selected:nth-child(even) {
-    background-color: $table-selected-light-color;
-}
-.class-table-data {
-    padding: 15px 0 15px 0;
-    border-right: 1px solid $box-border-color;
-    text-align: center;
-    pointer-events: none;
-}
-.class-table-data:last-of-type {
-    border-right: 0;
-}
-.class-type {
-    @extend .class-table-data;
-    width: 20%;
-}
-.class-time {
-    @extend .class-table-data;
-    width: 40%;
-}
-.class-enrolled {
-    @extend .class-table-data;
-    width: 40%;
-}
-.class-enrolled.full {
-    color: $error-font-color;
-}
-.class-enrolled.almost-full {
-    color: $warning-font-color;
-}
-.class-status {
-    @extend .class-table-data;
-    color: $error-font-color;
-    display: none;
-}
-.class-status[data-status='Open'] {
-    color: $text-font-color;
-}
-.class-location {
-    @extend .class-table-data;
-    display: none;
-}
+.course-table {
+    margin-top: 20px;
 
-@media only screen and (min-width:$breakpoint-small) {
-    .class-type {
-        width: 15%;
+    caption {
+        margin-left: 10px;
+        color: $on-background-font-color;
     }
-    .class-time {
-        width: 30%;
+
+    tr {
+        background-color: $table-light-color;
+        transition: background-color 0.1s;
+        border: 1px solid $box-border-color;
+        border-bottom: 0px;
+        cursor: pointer;
     }
-    .class-enrolled {
-        width: 30%;
+
+    tr:first-of-type {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
     }
-    .class-status {
-        width: 22.5%;
-        display: block;
+
+    tr:last-of-type {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-bottom: 1px solid $box-border-color;
     }
-    .class-location {
-        width: 32.5%;
-        display: block;
+
+    tr:nth-child(even) {
+        background-color: $table-dark-color;
+    }
+
+    tr:hover {
+        background-color: $table-hover-color;
+    }
+
+    tr.selected {
+        background-color: $table-selected-dark-color;
+    }
+
+    tr.selected:nth-child(even) {
+        background-color: $table-selected-light-color;
+    }
+
+    td {
+        padding: 15px 0 15px 0;
+        border-right: 1px solid $box-border-color;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    td:last-of-type {
+        border-right: 0;
+    }
+
+    td.class-type {
+        width: 20%;
+    }
+
+    td.class-time {
+        width: 40%;
+    }
+
+    td.class-enrolled {
+        width: 40%;
+    }
+
+    td.class-enrolled.full {
+        color: $error-font-color;
+    }
+
+    td.class-enrolled.almost-full {
+        color: $warning-font-color;
+    }
+
+    td.class-status {
+        color: $error-font-color;
+        display: none;
+    }
+
+    td.class-status[data-status='Open'] {
+        color: $text-font-color;
+    }
+
+    td.class-location {
+        display: none;
+    }
+
+    @media only screen and (min-width:$breakpoint-small) {
+        td.class-type {
+            width: 15%;
+        }
+
+        td.class-time {
+            width: 30%;
+        }
+
+        td.class-enrolled {
+            width: 30%;
+        }
+
+        td.class-status {
+            width: 22.5%;
+            display: block;
+        }
+
+        td.class-location {
+            width: 32.5%;
+            display: block;
+        }
     }
 }
 
 .contact-input-box {
     @extend .input-box;
     padding-left: 42px;
-}
-@media only screen and (min-width:$breakpoint-small) {
-    .contact-input-box {
+    @media only screen and (min-width:$breakpoint-small) {
         width: 60%;
     }
 }
@@ -304,14 +317,7 @@ caption {
     text-align: center;
 }
 
-.confirm-classes .course-table {
-    margin-top: 20px;
-}
-
-.success-confirm-classes {
-    @extend .confirm-classes;
-}
-.success-confirm-classes .class-table-row {
+.success-confirm-classes tr {
     cursor: default;
 }
 

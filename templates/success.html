@@ -10,11 +10,11 @@
 <div class="success-confirm-classes">
     {% for course in courses %}
         <table class="course-table">
-            <caption class="course-table-title">
+            <caption>
                 {{ course.course_id }}
             </caption>
             {% for class in course.classes %}
-                <tr class="class-table-row row selected">
+                <tr class="row selected">
                     <td class="class-type" data-type="{{ class.type }}">
                         {{ class.type }}
                     </td>
