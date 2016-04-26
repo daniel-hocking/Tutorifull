@@ -16,7 +16,6 @@ from constants import (
 
 def send_alerts(alerts):
     # organizes the alerts by contact info then sends one alert per contact info
-
     klasses_by_contact = defaultdict(list)
 
     for alert in alerts:
@@ -42,7 +41,7 @@ def alert_by_sms(phone_number, klasses):
 
 def alert_by_yo(username, klasses):
     print('sending yo to', username)
-    send_yo(username, 'meme.school?name=' + str(len(klasses)))
+    send_yo(username, 'dome.casa/alert?classids=' + ','.join((klass.klass_id for klass in klasses)))
 
 
 def send_yo(username, link=None):

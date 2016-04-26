@@ -13,6 +13,7 @@ from flask import (
     render_template,
     request,
 )
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql.expression import or_
 
 from constants import (
@@ -59,6 +60,36 @@ def homepage():
     return render_template('homepage.html')
 
 
+@app.route('/alert', methods=['GET'])
+def show_alert():
+    klass_ids = request.args.get('classids', '')
+    try:
+        klass_ids = [int(klass_id) for klass_id in klass_ids.split(',')]
+    except ValueError:
+        abort(418)  # TODO: render with error I guess
+
+    # get course info from db
+    # TODO: refactor this so less copy pasty from below
+    courses_dict = defaultdict(list)
+    for klass_id in klass_ids:
+        # TODO: check giving this strings/non-existent ids
+        try:
+            klass = g.db.query(Klass).filter_by(klass_id=klass_id).one()
+        except NoResultFound:
+            continue
+        courses_dict[klass.course.compound_id].append(klass)
+
+    if not courses_dict:
+        # no classes to display on the alert page
+        abort(418)  # TODO: render with error I guess
+
+    courses = [{'course_id': course_id,
+                'classes': [c.to_dict() for c in sorted(classes, key=lambda c: (c.klass_type, c.day, c.start_time))]}
+               for course_id, classes in sorted(courses_dict.iteritems())]
+
+    return render_template('alert.html', courses=courses)
+
+
 @app.route('/api/alerts', methods=['POST'])
 def save_alerts():
     # get info from the form
@@ -75,11 +106,13 @@ def save_alerts():
     else:
         abort(500)  # TODO: render homepage with error
 
+    # get course info from db
     courses_dict = defaultdict(list)
     for klass_id in post_data.get('classids', []):
-        # klass_id = validate_klass_id(klass_id)
-        # TODO: check giving this strings/non-existant ids
-        klass = g.db.query(Klass).filter_by(klass_id=klass_id).one()
+        try:
+            klass = g.db.query(Klass).filter_by(klass_id=klass_id).one()
+        except NoResultFound:
+            continue
         # insert the fact that they want to be notified into the db
         alert = Alert(klass_id=klass_id, contact_type=contact_type, contact=contact)
         g.db.add(alert)
