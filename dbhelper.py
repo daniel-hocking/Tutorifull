@@ -3,6 +3,8 @@ from __future__ import (
     print_function,
 )
 
+from flask import g
+from redis import StrictRedis
 from sqlalchemy import (
     create_engine,
     event,
@@ -23,7 +25,7 @@ Base.query = db_session.query_property()
 
 
 def init_db():
-    import models
+    import models  # NOQA (ignore unused import error)
     Base.metadata.create_all(engine)
 
 
@@ -32,3 +34,10 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
+
+
+def get_redis():
+    redis = getattr(g, '_redis', None)
+    if redis is None:
+        redis = g._redis = StrictRedis(host='localhost', port=6379, db=0)
+    return redis

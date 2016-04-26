@@ -47,6 +47,8 @@ def homepage():
 
 @app.route('/alert', methods=['GET'])
 def show_alert():
+    from contact import send_sms
+    send_sms('0435639303', 'lol')
     klass_ids = request.args.get('classids', '')
     klass_ids = klass_ids.split(',')
 
