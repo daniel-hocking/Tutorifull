@@ -196,7 +196,7 @@ while True:
         continue
 
     redis.set('last_classutil_update_time', r.headers['Last-Modified'])
-
+    break
 
 update_classes()
 check_alerts()
