@@ -4,13 +4,18 @@ from __future__ import (
 )
 
 import re
+import sys
+import time
 
 from bs4 import BeautifulSoup
 import requests
 
 from constants import CURRENT_SEM
 from contact import send_alerts
-from dbhelper import db_session
+from dbhelper import (
+    db_session,
+    get_redis,
+)
 from models import (
     Alert,
     Course,
@@ -174,6 +179,24 @@ def check_alerts():
     send_alerts(triggered_alerts)
 
     db_session.commit()
+
+log = open('scraper.log', 'a')
+
+# keep checking classutil until it updates
+retry_count = 0
+while True:
+    r = requests.get('http://classutil.unsw.edu.au/', stream=True)
+    last_time = get_redis().get('last_classutil_update_time')
+    if r.headers['Last-Modified'] == last_time:
+        retry_count += 1
+        if retry_count > 20:
+            log.write('scraper failed to update, too many retries')
+            sys.exit(1)
+
+        time.sleep(10)
+        continue
+
+    get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
 
 
 update_classes()
