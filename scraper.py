@@ -8,14 +8,12 @@ import sys
 import time
 
 from bs4 import BeautifulSoup
+from redis import StrictRedis
 import requests
 
 from constants import CURRENT_SEM
 from contact import send_alerts
-from dbhelper import (
-    db_session,
-    get_redis,
-)
+from dbhelper import db_session
 from models import (
     Alert,
     Course,
@@ -181,12 +179,13 @@ def check_alerts():
     db_session.commit()
 
 log = open('scraper.log', 'a')
+redis = StrictRedis(host='localhost', port=6379, db=0)
 
 # keep checking classutil until it updates
 retry_count = 0
 while True:
     r = requests.get('http://classutil.unsw.edu.au/', stream=True)
-    last_time = get_redis().get('last_classutil_update_time')
+    last_time = redis.get('last_classutil_update_time')
     if r.headers['Last-Modified'] == last_time:
         retry_count += 1
         if retry_count > 20:
@@ -196,7 +195,7 @@ while True:
         time.sleep(10)
         continue
 
-    get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
+    redis.set('last_classutil_update_time', r.headers['Last-Modified'])
 
 
 update_classes()
