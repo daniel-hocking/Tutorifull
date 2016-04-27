@@ -1,6 +1,7 @@
 *.db
 *.pyc
 *.wsgi
+*.log
 
 .sass-cache/
 venv/
