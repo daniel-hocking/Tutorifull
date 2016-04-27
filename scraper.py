@@ -197,7 +197,7 @@ while True:
         continue
 
     get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
-
+    break
 
 update_classes()
 check_alerts()
