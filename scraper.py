@@ -3,30 +3,33 @@ from __future__ import (
     print_function,
 )
 
+import argparse
+import logging
 import re
 import sys
 import time
 
 from bs4 import BeautifulSoup
-from redis import StrictRedis
 import requests
 
 from constants import CURRENT_SEM
 from contact import send_alerts
-from dbhelper import db_session
+from dbhelper import (
+    db_session,
+    get_redis,
+)
 from models import (
     Alert,
     Course,
     Dept,
     Klass,
 )
+from tutorifull import app
 from util import (
     hour_of_day_to_seconds_since_midnight,
     web_day_to_int_day,
     web_status_to_db_status,
 )
-
-DEBUG_PRINT = False
 
 
 def scrape_course_and_classes(course_id, dept_id, name, klasses):
@@ -48,9 +51,8 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         capacity = int(m.group(2))
         # separate the time from the place
 
-        if DEBUG_PRINT:
-            print('Storing class with class id:', klass_id)
-            print('Class row fields:', [d.get_text() for d in row])
+        logging.debug('Storing class with class id:', klass_id)
+        logging.debug('Class row fields:', [d.get_text() for d in row])
 
         m = re.search(r'(\w+) +(\d+(?::\d+)?(?:-\d+(?::\d+)?)?) *#? *(?: *\((?:.*, *)*(.*?)\))?',
                       time_and_place) if time_and_place else None
@@ -90,7 +92,7 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         klasses_to_delete.pop(klass_id, None)
 
     for klass in klasses_to_delete.values():
-        print(klass)
+        logging.debug('Deleting klass %s' % klass)
         db_session.delete(klass)
 
 
@@ -130,13 +132,37 @@ def scrape_dept(dept_id, name, page):
     scrape_course_and_classes(course_id, dept_id, name, klasses)
 
     for course in courses_to_delete.values():
-        print(course)
+        logging.debug('Deleting course %s' % course)
         db_session.delete(course)
 
     db_session.commit()
 
 
-def update_classes():
+def wait_until_updated():
+    # keep checking classutil until it updates
+    retry_count = 0
+    while True:
+        r = requests.get('http://classutil.unsw.edu.au/', stream=True)
+        last_time = get_redis().get('last_classutil_update_time')
+        if r.headers['Last-Modified'] == last_time:
+            retry_count += 1
+            if retry_count > 20:
+                logging.warn('scraper failed to update, too many retries\n')
+                return False
+
+            time.sleep(10)
+            continue
+
+        get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
+        break
+
+    return True
+
+
+def update_classes(force_update=False):
+    if not force_update and not wait_until_updated():
+        sys.exit(1)
+
     depts_to_delete = {dept.dept_id: dept for dept in db_session.query(Dept).all()}
 
     r = requests.get('http://classutil.unsw.edu.au/')
@@ -161,7 +187,7 @@ def update_classes():
                 scrape_dept(dept_id, name, link)
 
     for dept in depts_to_delete.values():
-        print(dept)
+        logging.debug('Deleting dept %s' % dept)
         db_session.delete(dept)
 
     db_session.commit()
@@ -178,25 +204,19 @@ def check_alerts():
 
     db_session.commit()
 
-log = open('scraper.log', 'a')
-redis = StrictRedis(host='localhost', port=6379, db=0)
+if __name__ == '__main__':
+    with app.app_context():
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--no-update', action="store_true", help="don't update the database from classutil")
+        parser.add_argument('--no-alert', action="store_true", help="don't send out or delete alerts")
+        parser.add_argument('--force-update', action="store_true",
+                            help="update the database from classutil even if it hasn't updated")
+        args = parser.parse_args()
 
-# keep checking classutil until it updates
-retry_count = 0
-while True:
-    r = requests.get('http://classutil.unsw.edu.au/', stream=True)
-    last_time = redis.get('last_classutil_update_time')
-    if r.headers['Last-Modified'] == last_time:
-        retry_count += 1
-        if retry_count > 20:
-            log.write('scraper failed to update, too many retries')
-            sys.exit(1)
+        logging.basicConfig(filename='scraper.log', level=logging.WARNING,
+                            format='%(levelname)s:%(asctime)s - %(message)s')
 
-        time.sleep(10)
-        continue
-
-    redis.set('last_classutil_update_time', r.headers['Last-Modified'])
-    break
-
-update_classes()
-check_alerts()
+        if not args.no_update:
+            update_classes(args.force_update)
+        if not args.no_alert:
+            check_alerts()

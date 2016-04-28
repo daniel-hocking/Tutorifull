@@ -39,7 +39,7 @@ def send_alerts(alerts):
 
 def create_alert_link(klass_ids):
     # TODO: store domain name in config
-    return 'dome.casa/alert?classids=' + ','.join(klass_ids)
+    return 'dome.casa/alert?classids=' + ','.join(map(str, klass_ids))
 
 
 def alert_by_email(email, klasses):
