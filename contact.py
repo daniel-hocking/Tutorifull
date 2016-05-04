@@ -4,6 +4,8 @@ from __future__ import (
 )
 
 from collections import defaultdict
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from flask import render_template
 import json
 import requests
@@ -48,9 +50,22 @@ def create_alert_link(klass_ids):
 
 
 def alert_by_email(email, klasses):
-    email_body = 'Subject: A spot has opened up in a class!\n' + render_template('email.html')
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = 'A spot has opened up in a class!'
+    msg['From'] = 'alert@' + DOMAIN_NAME
+    msg['To'] = email
+
+    text = "this is the text version of the email"
+    html = render_template('email.html')
+
+    part1 = MIMEText(text, 'plain')
+    part2 = MIMEText(html, 'html')
+
+    msg.attach(part1)
+    msg.attach(part2)
+
     pipe = Popen(['sendmail', '-f', 'alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
-    pipe.write(email_body)
+    pipe.write(msg.as_string())
     pipe.close()
 
 
