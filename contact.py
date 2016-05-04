@@ -4,10 +4,16 @@ from __future__ import (
 )
 
 from collections import defaultdict
+from flask import render_template
 import json
 import requests
+from subprocess import (
+    Popen,
+    PIPE,
+)
 
 from config import (
+    DOMAIN_NAME,
     TELSTRA_CONSUMER_KEY,
     TELSTRA_CONSUMER_SECRET,
     YO_API_KEY,
@@ -38,22 +44,22 @@ def send_alerts(alerts):
 
 
 def create_alert_link(klass_ids):
-    # TODO: store domain name in config
-    return 'dome.casa/alert?classids=' + ','.join(map(str, klass_ids))
+    return DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
 
 
 def alert_by_email(email, klasses):
-    print('sending email to', email)
+    email_body = 'Subject: A spot has opened up in a class!\n' + render_template('email.html')
+    pipe = Popen(['sendmail', '-f', 'alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
+    pipe.write(email_body)
+    pipe.close()
 
 
 def alert_by_sms(phone_number, klasses):
-    print('sending sms to', phone_number)
     send_sms(phone_number,
              "A spot has opened up in a class: %s" % create_alert_link(k.klass_id for k in klasses))
 
 
 def alert_by_yo(username, klasses):
-    print('sending yo to', username)
     send_yo(username,
             create_alert_link(k.klass_id for k in klasses),
             'A spot has opened up in a class!')
