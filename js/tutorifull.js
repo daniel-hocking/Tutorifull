@@ -118,8 +118,7 @@ function classSearchResultsCallback(course) {
         classEnrolled.dataset.enrolled = klass.enrolled;
         classEnrolled.dataset.capacity = klass.capacity;
         classEnrolled.dataset.percentage = klass.percentage;
-        console.log(klass);
-        if (klass.percentage == 100) {
+        if (klass.percentage >= 100) {
             classEnrolled.classList.add("full");
         } else if (klass.percentage >= 80) {
             classEnrolled.classList.add("almost-full");

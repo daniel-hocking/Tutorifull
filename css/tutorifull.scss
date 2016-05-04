@@ -78,8 +78,11 @@ caption {
 }
 
 .main-content {
-    width: 85%;
+    width: 95%;
     margin-top: 20px;
+    @media only screen and (min-width:$breakpoint-small) {
+        width: 85%;
+    }
     @media only screen and (min-width:$breakpoint-mid) {
         width: $breakpoint-mid * 0.85;
     }
@@ -238,11 +241,20 @@ caption {
     }
 
     td.class-time {
-        width: 40%;
+        width: 35%;
+    }
+
+    td.class-status {
+        color: $error-font-color;
+        width: 22.5%;
+    }
+
+    td.class-status[data-status='Open'] {
+        color: $text-font-color;
     }
 
     td.class-enrolled {
-        width: 40%;
+        width: 22.5%;
     }
 
     td.class-enrolled.full {
@@ -251,15 +263,6 @@ caption {
 
     td.class-enrolled.almost-full {
         color: $warning-font-color;
-    }
-
-    td.class-status {
-        color: $error-font-color;
-        display: none;
-    }
-
-    td.class-status[data-status='Open'] {
-        color: $text-font-color;
     }
 
     td.class-location {
@@ -276,16 +279,16 @@ caption {
         }
 
         td.class-enrolled {
-            width: 30%;
+            width: 20%;
         }
 
         td.class-status {
-            width: 22.5%;
+            width: 15%;
             display: block;
         }
 
         td.class-location {
-            width: 32.5%;
+            width: 30%;
             display: block;
         }
     }

@@ -36,9 +36,9 @@ def web_status_to_db_status(status):
 db_status_to_text_status_dict = {STATUS_OPEN: 'Open',
                                  STATUS_FULL: 'Full',
                                  STATUS_CLOSED: 'Closed',
-                                 STATUS_TENTATIVE: 'Tentative',
-                                 STATUS_CANCELLED: 'Cancelled',
-                                 STATUS_STOPPED: 'Stopped'}
+                                 STATUS_TENTATIVE: 'Tent',
+                                 STATUS_CANCELLED: 'Canc',
+                                 STATUS_STOPPED: 'Stop'}
 
 
 def db_status_to_text_status(status):

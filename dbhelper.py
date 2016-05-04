@@ -15,7 +15,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from config import DATABASE
 
-engine = create_engine('sqlite:///' + DATABASE)
+engine = create_engine(DATABASE)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
@@ -29,11 +29,11 @@ def init_db():
     Base.metadata.create_all(engine)
 
 
-@event.listens_for(Engine, "connect")
+'''@event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+    cursor.close()'''
 
 
 def get_redis():

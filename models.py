@@ -15,6 +15,7 @@ from sqlalchemy.orm import (
     column_property,
 )
 
+from constants import STATUS_OPEN
 from dbhelper import Base
 
 
@@ -34,7 +35,7 @@ class Alert(Base):
             self.alert_id, self.klass_id, self.contact_type, self.contact)
 
     def should_alert(self):
-        if self.klass.enrolled < self.klass.capacity:
+        if self.klass.status == STATUS_OPEN and self.klass.enrolled < self.klass.capacity:
             return True
         return False
 
@@ -125,4 +126,4 @@ class Klass(Base):
                 'status': db_status_to_text_status(self.status),
                 'enrolled': self.enrolled,
                 'capacity': self.capacity,
-                'percentage': int((float(self.enrolled) / self.capacity) * 100)}
+                'percentage': 0 if self.capacity == 0 else int((float(self.enrolled) / self.capacity) * 100)}

@@ -31,7 +31,7 @@
                     <td class="class-status" data-status="{{ class.status }}">
                         {{ class.status }}
                     </td>
-                    <td class="class-enrolled {% if class.percentage == 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
+                    <td class="class-enrolled {% if class.percentage >= 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
                         {{ class.enrolled }}/{{ class.capacity }}
                     </td>
                 </tr>

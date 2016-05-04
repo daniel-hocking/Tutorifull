@@ -202,11 +202,11 @@ def check_alerts():
             db_session.delete(alert)
 
     send_alerts(triggered_alerts)
+    logging.info('Sent %d alerts' % len(triggered_alerts))
 
     db_session.commit()
 
 if __name__ == '__main__':
-    print('Starting scraper at %s' % datetime.now())
     with app.app_context():
         parser = argparse.ArgumentParser()
         parser.add_argument('--no-update', action="store_true", help="don't update the database from classutil")
@@ -215,8 +215,11 @@ if __name__ == '__main__':
                             help="update the database from classutil even if it hasn't updated")
         args = parser.parse_args()
 
-        logging.basicConfig(filename='scraper.log', level=logging.WARNING,
+        logging.basicConfig(filename='scraper.log', level=logging.INFO,
                             format='%(levelname)s:%(asctime)s - %(message)s')
+        logging.getLogger("requests").setLevel(logging.WARNING)
+
+        logging.info('Starting scraper at %s' % datetime.now())
 
         if not args.no_update:
             update_classes(args.force_update)
