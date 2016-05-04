@@ -64,7 +64,7 @@ def alert_by_email(email, klasses):
     msg.attach(part1)
     msg.attach(part2)
 
-    pipe = Popen(['sendmail', '-f', 'alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
+    pipe = Popen(['sendmail', '-f', 'Tutorifull alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
     pipe.write(msg.as_string())
     pipe.close()
 
