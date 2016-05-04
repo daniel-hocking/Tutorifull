@@ -4,6 +4,7 @@ from __future__ import (
 )
 
 import argparse
+from datetime import datetime
 import logging
 import re
 import sys
@@ -205,6 +206,7 @@ def check_alerts():
     db_session.commit()
 
 if __name__ == '__main__':
+    print('Starting scraper at %s' % datetime.now())
     with app.app_context():
         parser = argparse.ArgumentParser()
         parser.add_argument('--no-update', action="store_true", help="don't update the database from classutil")
