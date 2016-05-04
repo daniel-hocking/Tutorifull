@@ -52,7 +52,7 @@ def create_alert_link(klass_ids):
 def alert_by_email(email, klasses):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'A spot has opened up in a class!'
-    msg['From'] = 'alert@' + DOMAIN_NAME
+    msg['From'] = 'Tutorifull alert@' + DOMAIN_NAME
     msg['To'] = email
 
     text = "this is the text version of the email"
@@ -64,7 +64,7 @@ def alert_by_email(email, klasses):
     msg.attach(part1)
     msg.attach(part2)
 
-    pipe = Popen(['sendmail', '-f', 'Tutorifull alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
+    pipe = Popen(['sendmail', '-f', 'alert@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
     pipe.write(msg.as_string())
     pipe.close()
 
