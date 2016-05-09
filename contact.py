@@ -52,7 +52,7 @@ def create_alert_link(klass_ids):
 def alert_by_email(email, klasses):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'A spot has opened up in a class!'
-    msg['From'] = 'Tutorifull alert@' + DOMAIN_NAME
+    msg['From'] = 'tutorifull@' + DOMAIN_NAME + '(Tutorifull)'
     msg['To'] = email
 
     text = "this is the text version of the email"
