@@ -46,7 +46,7 @@ def send_alerts(alerts):
 
 
 def create_alert_link(klass_ids):
-    return DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
+    return 'https://' + DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
 
 
 def alert_by_email(email, klasses):
@@ -81,7 +81,7 @@ def alert_by_yo(username, klasses):
 
 
 def send_yo(username, link=None, text=None):
-    requests.post("http://api.justyo.co/yo/",
+    requests.post("https://api.justyo.co/yo/",
                   data={'api_token': YO_API_KEY,
                         'username': username,
                         'link': link,
