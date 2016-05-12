@@ -132,6 +132,10 @@ caption {
 .search-parent {
     position: relative;
     z-index: 1;
+    width: 100%;
+    @media only screen and (min-width:$breakpoint-small) {
+        width: 60%;
+    }
 }
 .search-icon {
     @extend .icon;
@@ -146,9 +150,6 @@ caption {
 .course-search-results {
     position: absolute;
     width: 100%;
-    @media only screen and (min-width:$breakpoint-mid) {
-        width: $breakpoint-mid * 0.85;
-    }
 }
 .course-search-results::after {
     content: '';
