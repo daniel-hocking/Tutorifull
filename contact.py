@@ -101,7 +101,7 @@ def get_telstra_api_access_token():
                           'scope': 'SMS',
                           'grant_type': 'client_credentials'
                       }).json()
-    # TODO: make sure this returns the right http code
+
     # cache the access token in redis, making it expire slightly earlier than it does on the Telstra server
     get_redis().setex('telstra_api_access_token', int(r['expires_in']) - 60, r['access_token'])
     return r['access_token']
