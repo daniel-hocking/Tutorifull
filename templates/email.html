@@ -5,8 +5,172 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>A spot has opened up in a class!</title>
         <!--[if !mso]><!-- -->
-        <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
         <!--<![endif]-->
+        <style type="text/css">
+			/* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
+			#outlook a{padding: 0;} /* Force Outlook to provide a "view in browser" message */
+			.ReadMsgBody{width: 100%;} .ExternalClass{width: 100%;} /* Force Hotmail to display emails at full width */
+			.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;} /* Force Hotmail to display normal line spacing */
+			body, table, td, p, a, li, blockquote{-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;} /* Prevent WebKit and Windows mobile changing default text sizes */
+			table, td{mso-table-lspace: 0pt; mso-table-rspace: 0pt;} /* Remove spacing between tables in Outlook 2007 and up */
+			img{-ms-interpolation-mode: bicubic;} /* Allow smoother rendering of resized image in Internet Explorer */
+			/* /\/\/\/\/\/\/\/\/ RESET STYLES /\/\/\/\/\/\/\/\/ */
+			body{margin: 0; padding: 0;}
+			img{border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
+			table{border-collapse: collapse !important;}
+			body, #bodyTable, #bodyCell{height: 100% !important; margin: 0; padding: 0; width: 100% !important;}
+			/* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
+			/* ========== Page Styles ========== */
+			body, #bodyTable{
+				background-color: #e9eaed;
+			}
+			h1{
+				color: #214433 !important;
+				display: block;
+				font-family: 'Montserrat', sans-serif;
+				font-size: 32px;
+				font-style: normal;
+				font-weight: bold;
+				line-height: 100%;
+				letter-spacing: normal;
+				margin-top: 0;
+				margin-right: 0;
+				margin-bottom: 0;
+				margin-left: 0;
+				text-align: center;
+			}
+
+			caption{
+				color: #a9a9a9 !important;
+				font-family: 'Montserrat', sans-serif;
+				font-size: 16px;
+				font-style: normal;
+				font-weight: normal;
+				line-height: 100%;
+				letter-spacing: normal;
+				margin-top: 0;
+				margin-right: 0;
+				margin-bottom: 0;
+				margin-left: 10px;
+				text-align: left;
+			}
+			/* ========== Header Styles ========== */
+			#templateHeader{
+                height: 80px;
+				background-color: #7ac18a;
+				border-bottom: 7px solid #38a370;
+			}
+			.headerContent{
+				color: #214433;
+				font-family: 'Montserrat', sans-serif;
+				font-size: 20px;
+				font-weight: bold;
+				line-height: 100%;
+				padding-top: 0;
+				padding-right: 0;
+				padding-bottom: 0;
+				padding-left: 0;
+				text-align: left;
+				vertical-align: middle;
+			}
+			/* ========== Body Styles ========== */
+			.bodyContent {
+				color: #505050;
+				font-family: 'Montserrat', sans-serif;
+				font-size: 16px;
+				line-height: 150%;
+				padding-top: 20px;
+				padding-right: 0px;
+				padding-bottom: 20px;
+				padding-left: 0px;
+				text-align: left;
+			}
+            /* ========== Text Table Styles ========== */
+            .textTable {
+                margin-top: 20px;
+            }
+            .textTable td {
+                background-color: #ffffff;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                padding-left: 15px;
+                padding-right: 15px;
+                border: 1px solid #dbdee4;
+                text-align: left;
+            }
+            /* ========== Class Table Styles ========== */
+            .classTable {
+                margin-top: 20px;
+            }
+            .classTable tr {
+                background-color: #85ce95;
+            }
+            .classTable td {
+                padding-top: 15px;
+                padding-bottom: 15px;
+                border: 1px solid #dbdee4;
+                text-align: center;
+            }
+            .classTable td.class-type {
+                width: 15%;
+            }
+
+            .classTable td.class-time {
+                width: 30%;
+            }
+
+            .classTable td.class-enrolled {
+                width: 20%;
+            }
+
+            .classTable td.class-status {
+                width: 15%;
+            }
+
+            .classTable td.class-location {
+                width: 30%;
+            }
+			/* ========== Footer Styles ========== */
+			.footerContent {
+				color: #a9a9a9;
+				font-family: 'Montserrat', sans-serif;
+				font-size: 16px;
+				line-height: 150%;
+				padding-top: 20px;
+				padding-right: 20px;
+				padding-bottom: 20px;
+				padding-left: 20px;
+				text-align: center;
+			}
+			/* /\/\/\/\/\/\/\/\/ MOBILE STYLES /\/\/\/\/\/\/\/\/ */
+            @media only screen and (max-width: 480px){
+				/* /\/\/\/\/\/\/ CLIENT-SPECIFIC MOBILE STYLES /\/\/\/\/\/\/ */
+				body, table, td, p, a, li, blockquote{-webkit-text-size-adjust: none !important;} /* Prevent Webkit platforms from changing default text sizes */
+                body{width: 100% !important; min-width: 100% !important;} /* Prevent iOS Mail from adding padding to the body */
+				/* /\/\/\/\/\/\/ MOBILE TEMPLATE STYLES /\/\/\/\/\/\/ */
+				/* ======== Body Styles ======== */
+				.bodyContent{
+					font-size: 18px !important;
+					line-height: 125% !important;
+				}
+                .classTable td.class-type {
+                    width: 20%;
+                }
+                .classTable td.class-time {
+                    width: 35%;
+                }
+                .classTable td.class-status {
+                    width: 22.5%;
+                }
+                .classTable td.class-enrolled {
+                    width: 22.5%;
+                }
+                .classTable td.class-location {
+                    display: none;
+                }
+			}
+		</style>
     </head>
     <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;margin: 0;padding: 0;background-color: #e9eaed;height: 100% !important;width: 100% !important;">
     	<center>
