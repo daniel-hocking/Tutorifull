@@ -26,6 +26,7 @@ from constants import (
     CONTACT_TYPE_YO,
 )
 from dbhelper import get_redis
+from util import klasses_to_template_courses
 
 
 def send_alerts(alerts):
@@ -55,8 +56,8 @@ def alert_by_email(email, klasses):
     msg['From'] = 'tutorifull@' + DOMAIN_NAME + '(Tutorifull)'
     msg['To'] = email
 
-    text = "this is the text version of the email"
-    html = render_template('email.html')
+    text = "this is the text version of the email"  # TODO
+    html = render_template('email.html', courses=klasses_to_template_courses(klasses))
 
     part1 = MIMEText(text, 'plain')
     part2 = MIMEText(html, 'html')
