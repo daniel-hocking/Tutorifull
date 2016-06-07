@@ -50,14 +50,37 @@ def create_alert_link(klass_ids):
     return 'https://' + DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
 
 
+def klass_to_text_email_line(klass):
+    line = ' - '
+    line += '%s | ' % klass['type']
+    line += '%s %s-%s | ' % (
+        klass['day'], klass['start_time'], klass['end_time']) if (klass['day'] is not None and
+                                                                  klass['start_time'] is not None and
+                                                                  klass['end_time'] is not None) else ' | '
+    line += '%s | ' % klass['location'] if klass['location'] is not None else ' | '
+    line += '%s | ' % klass['status']
+    line += '%d/%d\n' % (klass['enrolled'], klass['capacity'])
+    return line
+
+
 def alert_by_email(email, klasses):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'A spot has opened up in a class!'
     msg['From'] = 'tutorifull@' + DOMAIN_NAME + '(Tutorifull)'
     msg['To'] = email
 
-    text = "this is the text version of the email"  # TODO
-    html = render_template('email.html', courses=klasses_to_template_courses(klasses))
+    courses = klasses_to_template_courses(klasses)
+
+    text = '''
+These classes now have a space for you to enrol.
+
+%s
+
+
+Made By a Dome
+''' % ''.join(course['course_id'] + '\n' + ''.join(klass_to_text_email_line(klass) for klass in course['classes'])
+              for course in courses)
+    html = render_template('email.html', courses=courses)
 
     part1 = MIMEText(text, 'plain')
     part2 = MIMEText(html, 'html')
