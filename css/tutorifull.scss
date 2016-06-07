@@ -186,6 +186,7 @@ caption {
 
 .course-table {
     margin-top: 20px;
+    border-collapse: separate;
 
     caption {
         margin-left: 10px;
@@ -195,20 +196,31 @@ caption {
     tr {
         background-color: $table-light-color;
         transition: background-color 0.1s;
-        border: 1px solid $box-border-color;
-        border-bottom: 0px;
         cursor: pointer;
     }
 
     tr:first-of-type {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        td {
+            border-top: 1px solid $box-border-color;
+        }
+
+        td:first-of-type {
+            border-top-left-radius: 5px;
+        }
+
+        td:last-of-type {
+            border-top-right-radius: 5px;
+        }
     }
 
     tr:last-of-type {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-bottom: 1px solid $box-border-color;
+        td:first-of-type {
+            border-bottom-left-radius: 5px;
+        }
+
+        td:last-of-type {
+            border-bottom-right-radius: 5px;
+        }
     }
 
     tr:nth-child(even) {
@@ -230,12 +242,12 @@ caption {
     td {
         padding: 15px 0 15px 0;
         border-right: 1px solid $box-border-color;
+        border-bottom: 1px solid $box-border-color;
         text-align: center;
-        pointer-events: none;
     }
 
-    td:last-of-type {
-        border-right: 0;
+    td:first-of-type {
+        border-left: 1px solid $box-border-color;
     }
 
     td.class-type {
@@ -290,7 +302,7 @@ caption {
 
         td.class-location {
             width: 30%;
-            display: block;
+            display: table-cell;
         }
     }
 }

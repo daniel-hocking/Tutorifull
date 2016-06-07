@@ -30,7 +30,7 @@ function httpGetAsync(theUrl, callback) {
 new autoComplete({
     selector: 'input[name="coursesearch"]',
     minChars: 2,
-    delay: 500,
+    delay: 300,
     source: function(term, suggest){
         if (term == '') {
             suggest([])
@@ -103,11 +103,11 @@ function classSearchResultsCallback(course) {
 
     // adding all the classes to the class search results list
     course.classes.forEach(function(klass) {
-        var classTableRow = createElement('tr', 'row');
+        var classTableRow = createElement('tr');
         classTableRow.dataset.classId = klass.class_id;
         classTableRow.dataset.courseId = course.course_id;
         if (selectedClassRows.has(classTableRow.dataset.classId)) {
-            classTableRow.className = 'row selected';
+            classTableRow.className = 'selected';
         }
         classTableRow.onclick = onSearchedClassClick;
 
