@@ -27,16 +27,24 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
+function httpGetSync(theUrl) {
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("GET", theUrl, false);
+    xmlHttp.send(null);
+    return xmlHttp.responseText;
+}
+
 new autoComplete({
     selector: 'input[name="coursesearch"]',
     minChars: 2,
     delay: 300,
     source: function(term, suggest){
         if (term == '') {
-            suggest([])
+            suggest([]);
         } else {
             httpGetAsync('/api/courses?q=' + term, function(data){
-                suggest(JSON.parse(data))
+                suggest(JSON.parse(data));
             });
         }
     },
@@ -69,8 +77,10 @@ new autoComplete({
                     sel.classList.toggle('selected');
                     next.classList.toggle('selected');
                     searchBox.value = next.textContent;
+                } else {
+                    sel.classList.toggle('selected');
+                    searchBox.value = searchBox.last_val; next = 0;
                 }
-                else { sel.classList.toggle('selected'); searchBox.value = searchBox.last_val; next = 0; }
             }
         } else if (key == 9 || key == 13) {
             //enter key
@@ -234,15 +244,66 @@ function clearOtherContactInputs() {
 
 // onclick handler for submit button
 document.getElementsByClassName('alert-me-button')[0].onclick = function() {
-    //TODO: validate email, phone, yo
     var postData = {};
-    Array.prototype.forEach.call(contactInputs,
-                                 function(contactInput) {
-                                     if (contactInput.value) {
-                                         postData[contactInput.name] = contactInput.value;
-                                     }
-                                 }
-    );
+    var error = false;
+
+    //validate contact form
+    if (contactInputs[0].value != '') {
+        //validate email
+        var email = contactInputs[0].value
+        if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+            postData.email = email;
+        } else {
+            //TODO: show an error about invalid email
+            alert('enter valid email pls');
+            error = true;
+        }
+    } else if (contactInputs[1].value != '') {
+        //validate phone number
+        var phoneNumber = contactInputs[1].value.replace(/\D/g, '');
+        if (/^04\d{8}$/.test(phoneNumber)) {
+            postData.phonenumber = phoneNumber;
+        } else {
+            //TODO: show an error about invalid phone number
+            alert('enter valid australian mobile phone number pls eg. 0401234567');
+            error = true;
+        }
+    } else if (contactInputs[2].value != '') {
+        //validate yo
+        var yoName = contactInputs[2].value;
+        if (/^(\d|\w)+$/.test(yoName)) {
+            // do it sync because otherwise the errors show up not all at the same time and that's confusing
+            var exists = JSON.parse(httpGetSync('/api/validateyoname?yoname=' + yoName)).exists;
+            if (exists) {
+                valid = true;
+                postData.yoname = yoName;
+            } else {
+                //TODO: show an error about non-existant yo username
+                alert('enter existing yo username pls');
+                error = true;
+            }
+        } else {
+            //TODO: show an error about invalid yo username
+            alert('enter valid yo username pls');
+            error = true;
+        }
+    } else {
+        //TODO: show an error about needing to input a contact
+        alert('enter a contact pls');
+        error = true;
+    }
+
+    //make sure at least one class is selected
+    if (selectedClassRows.size == 0) {
+        //TODO: show an error about needing to select some classes
+        alert('select some classes pls');
+        error = true;
+    }
+
+    if (error) {
+        return;
+    }
+
     postData.classids = Array.from(selectedClassRows.keys());
 
     var xhr = new XMLHttpRequest();

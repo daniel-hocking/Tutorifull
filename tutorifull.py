@@ -4,6 +4,7 @@ from __future__ import (
 )
 
 import json
+import requests
 
 from flask import (
     abort,
@@ -13,6 +14,7 @@ from flask import (
 )
 from sqlalchemy.sql.expression import or_
 
+from config import YO_API_KEY
 from constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
@@ -109,6 +111,13 @@ def course_info(course_id):
     dept_id, course_id = validate_course_id(course_id)
     course = db_session.query(Course).filter_by(dept_id=dept_id, course_id=course_id).one()
     return json.dumps(course.to_dict(with_classes=True))
+
+
+@app.route('/api/validateyoname', methods=['GET'])
+def validate_yo_name():
+    yo_name = request.args.get('yoname', '')
+    r = requests.get('https://api.justyo.co/check_username/', params={'api_token': YO_API_KEY, 'username': yo_name})
+    return r.text
 
 
 if __name__ == '__main__':
