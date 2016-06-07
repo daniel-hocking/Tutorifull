@@ -179,7 +179,8 @@ caption {
     border-bottom-right-radius: 20px;
     border-bottom: 1px solid $box-border-color;
 }
-.course-search-result:hover {
+.course-search-result:hover,
+.course-search-result.selected {
     background-color: $light-green;
 }
 

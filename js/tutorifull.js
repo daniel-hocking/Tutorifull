@@ -27,44 +27,66 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
-// onkeyup handler for searchbar
-searchBox.onkeyup = searchCourses;
-function searchCourses() {
-    // gets the courses matching the test in the search bar
-    var query = this.value;
-    if (query == '') {
+new autoComplete({
+    selector: 'input[name="coursesearch"]',
+    minChars: 2,
+    delay: 500,
+    source: function(term, suggest){
+        if (term == '') {
+            suggest([])
+        } else {
+            httpGetAsync('/api/courses?q=' + term, function(data){
+                suggest(JSON.parse(data))
+            });
+        }
+    },
+    renderItem: function (item, search){
+        var resultItem = createElement('li', 'course-search-result');
+        resultItem.textContent = item.course_id + ' - ' + item.course_name;
+        resultItem.dataset.courseId = item.course_id;
+        courseSearchResults.appendChild(resultItem);
+        return resultItem;
+    },
+    clearItems: function(){
         courseSearchResults.innerHTML = '';
-    } else {
-        httpGetAsync('/api/courses?q=' + query, courseSearchResultsCallback);
+    },
+    onSelect: function() {
+        httpGetAsync('/api/courses/' + this.dataset.courseId, classSearchResultsCallback);
+        courseSearchResults.innerHTML = '';
+        searchBox.value = this.textContent;
+    },
+    onControlKey: function(searchBox, key){
+        if (key == 40 || key == 38) {
+            //down, up keys
+            var sel = courseSearchResults.querySelector('.course-search-result.selected');
+            if (!sel) {
+                next = (key == 40) ? courseSearchResults.childNodes[0] : courseSearchResults.childNodes[courseSearchResults.childNodes.length - 1];
+                next.classList.toggle('selected');
+                searchBox.value = next.textContent;
+            } else {
+                next = (key == 40) ? sel.nextSibling : sel.previousSibling;
+                if (next) {
+                    sel.classList.toggle('selected');
+                    next.classList.toggle('selected');
+                    searchBox.value = next.textContent;
+                }
+                else { sel.classList.toggle('selected'); searchBox.value = searchBox.last_val; next = 0; }
+            }
+        } else if (key == 9 || key == 13) {
+            //enter key
+            var sel = courseSearchResults.querySelector('.course-search-result.selected');
+            if (sel) {
+                sel.click();
+            }
+        }
     }
-}
+});
 
 // onclick handler for searchbar
 searchBox.onclick = onSearchBoxClick;
 function onSearchBoxClick() {
     // when you click on the search box, all the text gets selected
     this.setSelectionRange(0, this.value.length);
-}
-
-function courseSearchResultsCallback(results) {
-    // shows the search results under the search bar
-    var results = JSON.parse(results);
-    courseSearchResults.innerHTML = '';
-    // adding all the course search results to the dropdown under the searchbar
-    results.forEach(function(result) {
-        var resultItem = createElement('li', 'course-search-result');
-        resultItem.textContent = result.course_id + ' - ' + result.course_name;
-        resultItem.dataset.courseId = result.course_id;
-        resultItem.onclick = onCourseSearchResultClick;
-        courseSearchResults.appendChild(resultItem);
-    });
-}
-
-function onCourseSearchResultClick() {
-    // clicking a course search result
-    httpGetAsync('/api/courses/' + this.dataset.courseId, classSearchResultsCallback);
-    courseSearchResults.innerHTML = '';
-    searchBox.value = this.textContent;
 }
 
 function classSearchResultsCallback(course) {
