@@ -60,6 +60,11 @@ caption {
     text-align: left;
 }
 
+:focus {
+    outline: none;
+    border: 2px solid $dark-green !important;
+}
+
 .page-column {
     margin-bottom: -100px;
 }
