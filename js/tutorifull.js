@@ -2,6 +2,9 @@ var searchBox = document.getElementsByClassName('search-box')[0];
 var courseSearchResults = document.getElementsByClassName('course-search-results')[0];
 var classSearchResults = document.getElementsByClassName('class-search-results')[0];
 var contactInputs = document.getElementsByClassName('contact-input-box');
+var emailInput = contactInputs[0];
+var phoneNumberInput = contactInputs[1];
+var yoNameInput = contactInputs[2];
 var confirmClasses = document.getElementsByClassName('confirm-classes')[0];
 var searchedClassRows = new Map(); // classes under the select step
 var selectedCourseTables = new Map(); // courses under the confirm step
@@ -25,14 +28,6 @@ function httpGetAsync(theUrl, callback) {
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous
     xmlHttp.send(null);
-}
-
-function httpGetSync(theUrl) {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.open("GET", theUrl, false);
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
 }
 
 new autoComplete({
@@ -224,76 +219,120 @@ function onSelectedClassClick() {
 }
 
 
-
 // onkeyup handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
                              function(contactInput) {
-                                 contactInput.onkeyup = clearOtherContactInputs;
+                                 contactInput.onkeyup = function() {
+                                     clearOtherContactInputs(contactInput);
+                                 };
                              }
 );
-function clearOtherContactInputs() {
-    var chosenInput = this;
+
+// onblur handlers for contact inputs
+Array.prototype.forEach.call(contactInputs,
+                             function(contactInput) {
+                                 contactInput.onblur = function() {
+                                     var val = contactInput.value;
+                                     if (val.length >= 1) {
+                                         switch(contactInput.name) {
+                                            case 'email':
+                                                validateEmail();
+                                                break;
+                                            case 'phonenumber':
+                                                validatePhoneNumber();
+                                                break;
+                                            case 'yoname':
+                                                validateYoName();
+                                         }
+                                     } else {
+                                         contactInput.classList.remove('valid', 'invalid');
+                                     }
+                                 };
+                             }
+);
+
+function validateEmail() {
+    var email = emailInput.value
+    if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+        emailInput.classList.remove('invalid');
+        emailInput.classList.add('valid');
+    } else {
+        emailInput.classList.remove('valid');
+        emailInput.classList.add('invalid');
+    }
+}
+
+function validatePhoneNumber() {
+    var phoneNumber = phoneNumberInput.value.replace(/\D/g, '');
+    if (/^04\d{8}$/.test(phoneNumber)) {
+        phoneNumberInput.value = phoneNumber;
+        phoneNumberInput.classList.remove('invalid');
+        phoneNumberInput.classList.add('valid');
+    } else {
+        phoneNumberInput.classList.remove('valid');
+        phoneNumberInput.classList.add('invalid');
+    }
+}
+
+function validateYoName() {
+    var yoName = yoNameInput.value;
+    if (/^(\d|\w)+$/.test(yoName)) {
+        // do it sync because otherwise the errors show up not all at the same time and that's confusing
+        httpGetAsync('/api/validateyoname?yoname=' + yoName, function(response) {
+            if (yoNameInput.value != yoName) {
+                return;
+            }
+            var exists = JSON.parse(response).exists;
+            if (exists) {
+                yoNameInput.value = yoName.toUpperCase();
+                yoNameInput.classList.remove('invalid');
+                yoNameInput.classList.add('valid');
+            } else {
+                yoNameInput.classList.remove('valid');
+                yoNameInput.classList.add('invalid');
+            }
+        });
+    } else {
+        yoNameInput.classList.remove('valid');
+        yoNameInput.classList.add('invalid');
+    }
+}
+
+function clearOtherContactInputs(chosenInput) {
     Array.prototype.forEach.call(contactInputs,
                                  function(contactInput) {
                                      if (contactInput != chosenInput) {
                                          contactInput.value = '';
+                                         contactInput.classList.remove('valid', 'invalid');
                                      }
                                  }
     );
 }
 
+
 // onclick handler for submit button
 document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     var postData = {};
+    var contactGiven = false;
     var error = false;
 
-    //validate contact form
-    if (contactInputs[0].value != '') {
-        //validate email
-        var email = contactInputs[0].value
-        if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-            postData.email = email;
-        } else {
-            //TODO: show an error about invalid email
-            alert('enter valid email pls');
-            error = true;
+    //find the valid contact
+    for(var i=0; i < contactInputs.length; i++) {
+        var contactInput = contactInputs[i];
+        if (contactInput.classList.contains('valid')) {
+            postData[contactInput.name] = contactInput.value;
+            contactGiven = true;
+            break;
         }
-    } else if (contactInputs[1].value != '') {
-        //validate phone number
-        var phoneNumber = contactInputs[1].value.replace(/\D/g, '');
-        if (/^04\d{8}$/.test(phoneNumber)) {
-            postData.phonenumber = phoneNumber;
-        } else {
-            //TODO: show an error about invalid phone number
-            alert('enter valid australian mobile phone number pls eg. 0401234567');
-            error = true;
-        }
-    } else if (contactInputs[2].value != '') {
-        //validate yo
-        var yoName = contactInputs[2].value;
-        if (/^(\d|\w)+$/.test(yoName)) {
-            // do it sync because otherwise the errors show up not all at the same time and that's confusing
-            var exists = JSON.parse(httpGetSync('/api/validateyoname?yoname=' + yoName)).exists;
-            if (exists) {
-                valid = true;
-                postData.yoname = yoName;
-            } else {
-                //TODO: show an error about non-existant yo username
-                alert('enter existing yo username pls');
-                error = true;
-            }
-        } else {
-            //TODO: show an error about invalid yo username
-            alert('enter valid yo username pls');
-            error = true;
-        }
-    } else {
+    }
+
+    if (!contactGiven) {
         //TODO: show an error about needing to input a contact
         alert('enter a contact pls');
         error = true;
     }
 
-    //make sure at least one class is selected
+    // make sure at least one class is selected
     if (selectedClassRows.size == 0) {
         //TODO: show an error about needing to select some classes
         alert('select some classes pls');

@@ -314,6 +314,14 @@ caption {
         width: 60%;
     }
 }
+.contact-input-box.valid {
+    background-color: green;
+}
+
+.contact-input-box.invalid {
+    background-color: red;
+}
+
 .email-icon {
     @extend .icon;
     background-image: url("../icons/email.png");
