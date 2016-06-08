@@ -199,10 +199,12 @@ def check_alerts():
     for alert in db_session.query(Alert):
         if alert.should_alert():
             triggered_alerts.append(alert)
-            db_session.delete(alert)
 
-    send_alerts(triggered_alerts)
-    logging.info('Sent %d alerts' % len(triggered_alerts))
+    successful_alerts = send_alerts(triggered_alerts)
+    for alert in successful_alerts:
+        db_session.delete(alert)
+
+    logging.info('Tried to send %d alerts, %d succeeded' % (len(triggered_alerts), len(successful_alerts)))
 
     db_session.commit()
 

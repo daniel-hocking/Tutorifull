@@ -8,6 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask import render_template
 import json
+import logging
 import requests
 from subprocess import (
     Popen,
@@ -31,19 +32,26 @@ from util import klasses_to_template_courses
 
 def send_alerts(alerts):
     # organizes the alerts by contact info then sends one alert per contact info
-    klasses_by_contact = defaultdict(list)
+    alerts_by_contact = defaultdict(list)
+    successful_alerts = []
 
     for alert in alerts:
-        klasses_by_contact[(alert.contact, alert.contact_type)].append(alert.klass)
+        alerts_by_contact[(alert.contact, alert.contact_type)].append(alert.klass)
 
-    for contact, klasses in klasses_by_contact.iteritems():
+    for contact, alerts in alerts_by_contact.iteritems():
         contact, contact_type = contact
-        if contact_type == CONTACT_TYPE_EMAIL:
-            alert_by_email(contact, klasses)
-        elif contact_type == CONTACT_TYPE_SMS:
-            alert_by_sms(contact, klasses)
-        elif contact_type == CONTACT_TYPE_YO:
-            alert_by_yo(contact, klasses)
+        try:
+            if contact_type == CONTACT_TYPE_EMAIL:
+                alert_by_email(contact, alerts)
+            elif contact_type == CONTACT_TYPE_SMS:
+                alert_by_sms(contact, alerts)
+            elif contact_type == CONTACT_TYPE_YO:
+                alert_by_yo(contact, alerts)
+            successful_alerts.append(alerts)
+        except:
+            logging.exception('Error sending these alerts: %s' % alerts)
+
+    return successful_alerts
 
 
 def create_alert_link(klass_ids):
@@ -63,13 +71,13 @@ def klass_to_text_email_line(klass):
     return line
 
 
-def alert_by_email(email, klasses):
+def alert_by_email(email, alerts):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'A spot has opened up in a class!'
     msg['From'] = 'tutorifull@' + DOMAIN_NAME + '(Tutorifull)'
     msg['To'] = email
 
-    courses = klasses_to_template_courses(klasses)
+    courses = klasses_to_template_courses(alert.klass for alert in alerts)
 
     text = '''
 These classes now have a space for you to enrol.
@@ -93,14 +101,14 @@ Made By a Dome
     pipe.close()
 
 
-def alert_by_sms(phone_number, klasses):
+def alert_by_sms(phone_number, alerts):
     send_sms(phone_number,
-             "A spot has opened up in a class: %s" % create_alert_link(k.klass_id for k in klasses))
+             "A spot has opened up in a class: %s" % create_alert_link(a.klass.klass_id for a in alerts))
 
 
-def alert_by_yo(username, klasses):
+def alert_by_yo(username, alerts):
     send_yo(username,
-            create_alert_link(k.klass_id for k in klasses),
+            create_alert_link(a.klass.klass_id for a in alerts),
             'A spot has opened up in a class!')
 
 
