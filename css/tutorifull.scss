@@ -65,6 +65,10 @@ caption {
     border: 2px solid $dark-green !important;
 }
 
+.hidden {
+    display: none;
+}
+
 .page-column {
     margin-bottom: -100px;
 }
@@ -99,6 +103,13 @@ caption {
     background-color: $box-background-color;
     border: 1px solid $box-border-color;
     border-radius: 5px;
+}
+
+.warning-text-box {
+    @extend .text-box;
+    color: $error-font-color;
+    margin-bottom: 20px;
+    //TODO: add a cross icon or something
 }
 
 .step {
@@ -312,12 +323,16 @@ caption {
     }
 }
 
-.contact-input-box {
-    @extend .input-box;
-    padding-left: 42px;
+.contact-info {
+    width: 100%;
     @media only screen and (min-width:$breakpoint-small) {
         width: 60%;
     }
+}
+
+.contact-input-box {
+    @extend .input-box;
+    padding-left: 42px;
 }
 .contact-input-box.valid {
     background-color: green;

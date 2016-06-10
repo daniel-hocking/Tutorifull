@@ -61,11 +61,9 @@ def create_alert_link(klass_ids):
 def klass_to_text_email_line(klass):
     line = ' - '
     line += '%s | ' % klass['type']
-    line += '%s %s-%s | ' % (
-        klass['day'], klass['start_time'], klass['end_time']) if (klass['day'] is not None and
-                                                                  klass['start_time'] is not None and
-                                                                  klass['end_time'] is not None) else ' | '
-    line += '%s | ' % klass['location'] if klass['location'] is not None else ' | '
+    line += '%s | ' % (', '.join('%s %s-%s' % (timeslot['day'], timeslot['start_time'], timeslot['end_time'])
+                                 for timeslot in klass['timeslots']))
+    line += '%s | ' % ', '.join(timeslot['location'] for timeslot in klass['timeslots'])
     line += '%s | ' % klass['status']
     line += '%d/%d\n' % (klass['enrolled'], klass['capacity'])
     return line

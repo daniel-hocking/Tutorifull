@@ -118,6 +118,10 @@ def klasses_to_template_courses(klasses):
         courses_dict[klass.course.compound_id].append(klass)
 
     courses = [{'course_id': course_id,
-                'classes': [c.to_dict() for c in sorted(classes, key=lambda c: (c.klass_type, c.day, c.start_time))]}
+                'classes': [c.to_dict()
+                            for c in sorted(classes,
+                                            key=lambda c: (c.klass_type,
+                                                           c.timeslots[0].day if c.timeslots else None,
+                                                           c.timeslots[0].start_time if c.timeslots else None))]}
                for course_id, classes in sorted(courses_dict.iteritems())]
     return courses

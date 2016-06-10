@@ -15,23 +15,23 @@
             </caption>
             {% for class in course.classes %}
                 <tr class="selected">
-                    <td class="class-type" data-type="{{ class.type }}">
+                    <td class="class-type">
                         {{ class.type }}
                     </td>
-                    <td class="class-time" data-day="{{ class.day }}" data-start-time="{{ class.start_time }}" data-end-time="{{ class.end_time }}">
-                        {% if class.day and class.start_time and class.end_time %}
-                            {{ class.day }} {{ class.start_time }}-{{ class.end_time }}
-                        {% endif %}
+                    <td class="class-time">
+                        {% for timeslot in class.timeslots %}
+                            <p>{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
+                        {% endfor %}
                     </td>
-                    <td class="class-location" data-location="{{ class.location }}">
-                        {% if class.location %}
-                            {{ class.location }}
-                        {% endif %}
+                    <td class="class-location">
+                        {% for timeslot in class.timeslots %}
+                            <p>{{ timeslot.location }}</p>
+                        {% endfor %}
                     </td>
                     <td class="class-status" data-status="{{ class.status }}">
                         {{ class.status }}
                     </td>
-                    <td class="class-enrolled {% if class.percentage >= 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}" data-enrolled="{{ class.enrolled }}" data-capacity="{{ class.capacity }}" data-percentage="{{ class.percentage }}">
+                    <td class="class-enrolled {% if class.percentage >= 100 %}full{% elif class.percentage >= 80 %}almost-full{% endif %}">
                         {{ class.enrolled }}/{{ class.capacity }}
                     </td>
                 </tr>

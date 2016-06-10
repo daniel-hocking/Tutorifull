@@ -9,6 +9,8 @@ var confirmClasses = document.getElementsByClassName('confirm-classes')[0];
 var searchedClassRows = new Map(); // classes under the select step
 var selectedCourseTables = new Map(); // courses under the confirm step
 var selectedClassRows = new Map(); // classes under the confirm step
+var noSelectedClassesWarning = document.getElementById("no-selected-classes-warning");
+var noContactInfoWarning = document.getElementById("no-contact-info-warning");
 
 function createElement(type, klass) {
     // helper function that creates a DOM element of a certain type with the given classes
@@ -118,21 +120,22 @@ function classSearchResultsCallback(course) {
 
         var classType = createElement('td', 'class-type');
         classType.textContent = klass.type;
-        classType.dataset.type = klass.type;
         classTableRow.appendChild(classType);
 
         var classTime = createElement('td', 'class-time');
-        if (klass.day != null) {
-            classTime.textContent = klass.day + ' ' + klass.start_time + '-' + klass.end_time;
-            classType.dataset.day = klass.day;
-            classType.dataset.startTime = klass.start_time;
-            classType.dataset.endTime = klass.end_time;
+        for (var i=0; i<klass.timeslots.length; i++) {
+            var classTimeP = createElement('p');
+            classTimeP.textContent = klass.timeslots[i].day + ' ' + klass.timeslots[i].start_time + '-' + klass.timeslots[i].end_time;
+            classTime.appendChild(classTimeP);
         }
         classTableRow.appendChild(classTime);
 
         var classLocation = createElement('td', 'class-location');
-        classLocation.textContent = klass.location;
-        classLocation.dataset.location = klass.location;
+        for (var i=0; i<klass.timeslots.length; i++) {
+            var classLocationP = createElement('p');
+            classLocationP.textContent = klass.timeslots[i].location;
+            classLocation.appendChild(classLocationP);
+        }
         classTableRow.appendChild(classLocation);
 
         var classStatus = createElement('td', 'class-status');
@@ -142,9 +145,6 @@ function classSearchResultsCallback(course) {
 
         var classEnrolled = createElement('td', 'class-enrolled');
         classEnrolled.textContent = klass.enrolled + '/' + klass.capacity;
-        classEnrolled.dataset.enrolled = klass.enrolled;
-        classEnrolled.dataset.capacity = klass.capacity;
-        classEnrolled.dataset.percentage = klass.percentage;
         if (klass.percentage >= 100) {
             classEnrolled.classList.add("full");
         } else if (klass.percentage >= 80) {
@@ -206,6 +206,8 @@ function onSearchedClassClick() {
         selectedCourseTable.appendChild(selectedClassRow);
         selectedClassRows.set(this.dataset.classId, selectedClassRow);
     }
+
+    noSelectedClassesWarning.classList.add('hidden');
 }
 
 function onSelectedClassClick() {
@@ -247,6 +249,7 @@ Array.prototype.forEach.call(contactInputs,
                                      } else {
                                          contactInput.classList.remove('valid', 'invalid');
                                      }
+                                     noContactInfoWarning.classList.add('hidden');
                                  };
                              }
 );
@@ -326,16 +329,17 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
         }
     }
 
-    if (!contactGiven) {
-        //TODO: show an error about needing to input a contact
-        alert('enter a contact pls');
+    // make sure at least one class is selected
+    if (selectedClassRows.size == 0) {
+        noSelectedClassesWarning.classList.remove('hidden');
+        window.location = "#step4";
         error = true;
     }
 
-    // make sure at least one class is selected
-    if (selectedClassRows.size == 0) {
-        //TODO: show an error about needing to select some classes
-        alert('select some classes pls');
+    // make sure they entered a valid contact
+    if (!contactGiven) {
+        noContactInfoWarning.classList.remove('hidden');
+        window.location = "#step3";
         error = true;
     }
 

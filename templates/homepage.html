@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="step">
+<div class="step" id="step1">
     <div class="row justify-centered">
         <div class="step-circle row justify-centered cross-centered">
             <div>1</div>
@@ -35,7 +35,7 @@
     </div>
 </div>
 
-<div class="step">
+<div class="step" id="step2">
     <div class="row justify-centered">
         <div class="step-circle row justify-centered cross-centered">
             <div>2</div>
@@ -54,7 +54,7 @@
     </div>
 </div>
 
-<div class="step">
+<div class="step" id="step3">
     <div class="row justify-centered">
         <div class="step-circle row justify-centered cross-centered">
             <div>3</div>
@@ -67,22 +67,30 @@
     </div>
 </div>
 
-<div class="row justify-centered">
-    <div class="email-icon"></div>
-    <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
-</div>
-    <div class="contact-or">or</div>
-<div class="row justify-centered">
-    <div class="sms-icon"></div>
-    <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
-</div>
-    <div class="contact-or">or</div>
-<div class="row justify-centered">
-    <div class="yo-icon"></div>
-    <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
+<div class="warning-text-box hidden" id="no-contact-info-warning">
+    Please enter some contact info before submitting.
 </div>
 
-<div class="step">
+<div class="row justify-centered">
+    <div class="column cross-centered contact-info">
+        <div class="row">
+            <div class="email-icon"></div>
+            <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
+        </div>
+            <div class="contact-or">or</div>
+        <div class="row">
+            <div class="sms-icon"></div>
+            <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
+        </div>
+            <div class="contact-or">or</div>
+        <div class="row">
+            <div class="yo-icon"></div>
+            <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
+        </div>
+    </div>
+</div>
+
+<div class="step" id="step4">
     <div class="row justify-centered">
         <div class="step-circle row justify-centered cross-centered">
             <div>4</div>
@@ -96,6 +104,9 @@
 </div>
 
 <div class="confirm-classes">
+    <div class="warning-text-box hidden" id="no-selected-classes-warning">
+        Please select at least one class before submitting.
+    </div>
     <div class="text-box">
         Select some classes above
     </div>

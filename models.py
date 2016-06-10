@@ -61,7 +61,7 @@ class Course(Base):
     name = Column(String, nullable=False)
 
     dept = relationship('Dept', back_populates='courses')
-    klasses = relationship('Klass', order_by='Klass.start_time', back_populates='course',
+    klasses = relationship('Klass', back_populates='course',
                            cascade="all, delete, delete-orphan")
 
     compound_id = column_property(dept_id + course_id)
@@ -77,12 +77,16 @@ class Course(Base):
         d = {'course_id': self.compound_id,
              'course_name': self.name}
         if with_classes:
-            d['classes'] = [klass.to_dict() for klass in sorted(self.klasses, key=lambda c: (c.klass_type, c.day))]
+            d['classes'] = [klass.to_dict()
+                            for klass in sorted(self.klasses,
+                                                key=lambda c: (c.klass_type,
+                                                               c.timeslots[0].day if c.timeslots else None,
+                                                               c.timeslots[0].start_time if c.timeslots else None))]
         return d
 
 
 class Klass(Base):
-    '''A class time eg. COMP2041 tutelab on Wednesday from 3pm to 6pm'''
+    '''A class you can choose when you enrol (a lab, a series of lectures, etc.)'''
     __tablename__ = 'klasses'
     klass_id = Column(Integer, primary_key=True)
     course_id = Column(String, nullable=False)
@@ -91,10 +95,7 @@ class Klass(Base):
     status = Column(Integer, nullable=False)
     enrolled = Column(Integer, nullable=False)
     capacity = Column(Integer, nullable=False)
-    day = Column(Integer)
-    start_time = Column(Integer)
-    end_time = Column(Integer)
-    location = Column(String)
+    timeslot_raw_string_hash = Column(Integer, nullable=False)  # to check whether we need to update the timeslots
     __table_args__ = (
         ForeignKeyConstraint(
             ['course_id', 'dept_id'],
@@ -103,6 +104,8 @@ class Klass(Base):
         ),
     )
 
+    timeslots = relationship('Timeslot', back_populates='klass',
+                             cascade="all, delete, delete-orphan")
     course = relationship('Course', back_populates='klasses')
     alerts = relationship('Alert', order_by='Alert.alert_id', back_populates='klass',
                           cascade="all, delete, delete-orphan")
@@ -112,18 +115,46 @@ class Klass(Base):
             self.klass_id, self.dept_id, self.course_id, self.klass_type)
 
     def to_dict(self):
-        from util import (
-            db_status_to_text_status,
-            int_day_to_text_day,
-            seconds_since_midnight_to_hour_of_day,
-        )
+        from util import db_status_to_text_status
         return {'class_id': self.klass_id,
                 'type': self.klass_type,
-                'day': int_day_to_text_day(self.day),
-                'start_time': seconds_since_midnight_to_hour_of_day(self.start_time),
-                'end_time': seconds_since_midnight_to_hour_of_day(self.end_time),
-                'location': self.location,
+                'timeslots': [timeslot.to_dict() for timeslot in self.timeslots],
                 'status': db_status_to_text_status(self.status),
                 'enrolled': self.enrolled,
                 'capacity': self.capacity,
                 'percentage': 0 if self.capacity == 0 else int((float(self.enrolled) / self.capacity) * 100)}
+
+
+class Timeslot(Base):
+    __tablename__ = 'timeslots'
+    timeslot_id = Column(Integer, primary_key=True)
+    klass_id = Column(Integer, ForeignKey('klasses.klass_id'), nullable=False)
+    day = Column(Integer)
+    start_time = Column(Integer)
+    end_time = Column(Integer)
+    location = Column(String)
+
+    def __repr__(self):
+        from util import (
+            int_day_to_text_day,
+            seconds_since_midnight_to_hour_of_day,
+        )
+
+        return "<Timeslot(day='%d', start_time='%d', end_time='%s', location='%s')>" % (
+            int_day_to_text_day(self.day),
+            seconds_since_midnight_to_hour_of_day(self.start_time),
+            seconds_since_midnight_to_hour_of_day(self.end_time),
+            self.location)
+
+    def to_dict(self):
+        from util import (
+            int_day_to_text_day,
+            seconds_since_midnight_to_hour_of_day,
+        )
+
+        return {'day': int_day_to_text_day(self.day),
+                'start_time': seconds_since_midnight_to_hour_of_day(self.start_time),
+                'end_time': seconds_since_midnight_to_hour_of_day(self.end_time),
+                'location': self.location}
+
+    klass = relationship('Klass', back_populates='timeslots')

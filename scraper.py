@@ -13,7 +13,10 @@ import time
 from bs4 import BeautifulSoup
 import requests
 
-from constants import CURRENT_SEM
+from constants import (
+    CURRENT_SEM,
+    POSTGRES_MAX_INT,
+)
 from contact import send_alerts
 from dbhelper import (
     db_session,
@@ -24,6 +27,7 @@ from models import (
     Course,
     Dept,
     Klass,
+    Timeslot,
 )
 from tutorifull import app
 from util import (
@@ -55,28 +59,43 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         logging.debug('Storing class with class id:', klass_id)
         logging.debug('Class row fields:', [d.get_text() for d in row])
 
-        m = re.search(r'(\w+) +(\d+(?::\d+)?(?:-\d+(?::\d+)?)?) *#? *(?: *\((?:.*, *)*(.*?)\))?',
-                      time_and_place) if time_and_place else None
-        if m:
-            day = web_day_to_int_day(m.group(1))
-            time = m.group(2)
-            if '-' in time:
-                start_time, end_time = map(hour_of_day_to_seconds_since_midnight, time.split('-'))
-            else:
-                start_time = hour_of_day_to_seconds_since_midnight(time)
-                end_time = start_time + 60 * 60
-            location = m.group(3)
-            # as a last resort, filter out any locations we've extracted that don't have a letter in them
-            # also filter out anything that looks like a range of weeks (eg. w1-12)
-            if location is not None and (
-                    not re.search(r'[a-zA-Z]', location) or
-                    re.match(r'^w\d+(?:-\d+)?$', location)):
-                location = None
-        else:
-            day = None
-            start_time = None
-            end_time = None
-            location = None
+        # if this is a new class or the timeslot raw text has changed since we last saw it
+        if klass_id not in klasses_to_delete or (
+                hash(time_and_place) % POSTGRES_MAX_INT != klasses_to_delete[klass_id].timeslot_raw_string_hash):
+            # if the klass already existed, delete all existing timeslots and recreate them
+            if klass_id in klasses_to_delete:
+                logging.debug('Recreating timeslots for klass %s' % klasses_to_delete[klass_id])
+                for timeslot in klasses_to_delete[klass_id].timeslots:
+                    db_session.delete(timeslot)
+
+            for time_and_place_part in time_and_place.split(';'):
+                m = re.search(r'(\w+) +(\d+(?::\d+)?(?:-\d+(?::\d+)?)?) *#? *(?: *\((?:.*, *)*(.*?)\))?',
+                              time_and_place_part)
+
+                if m:
+                    day = web_day_to_int_day(m.group(1))
+
+                    time = m.group(2)
+                    if '-' in time:
+                        start_time, end_time = map(hour_of_day_to_seconds_since_midnight, time.split('-'))
+                    else:
+                        start_time = hour_of_day_to_seconds_since_midnight(time)
+                        end_time = start_time + 60 * 60
+
+                    location = m.group(3)
+                    # as a last resort, filter out any locations we've extracted that don't have a letter in them
+                    # also filter out anything that looks like a range of weeks (eg. w1-12)
+                    if location is not None and (
+                            not re.search(r'[a-zA-Z]', location) or
+                            re.match(r'^w\d+(?:-\d+)?$', location)):
+                        location = None
+
+                    timeslot = Timeslot(klass_id=klass_id,
+                                        day=day,
+                                        start_time=start_time,
+                                        end_time=end_time,
+                                        location=location)
+                    db_session.add(timeslot)
 
         klass = Klass(klass_id=klass_id,
                       course_id=course_id,
@@ -85,10 +104,7 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                       status=status,
                       enrolled=enrolled,
                       capacity=capacity,
-                      day=day,
-                      start_time=start_time,
-                      end_time=end_time,
-                      location=location)
+                      timeslot_raw_string_hash=hash(time_and_place) % POSTGRES_MAX_INT)
         db_session.merge(klass)
         klasses_to_delete.pop(klass_id, None)
 

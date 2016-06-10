@@ -3,6 +3,8 @@ from __future__ import (
     print_function,
 )
 
+POSTGRES_MAX_INT = 2147483647
+
 # class statuses
 STATUS_OPEN = 0
 STATUS_FULL = 1
