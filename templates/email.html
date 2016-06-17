@@ -19,6 +19,7 @@
 			body {margin: 0; padding: 0;}
 			img {border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
 			body, #bodyTable, #bodyCell {height: 100% !important; margin: 0; padding: 0; width: 100% !important;}
+            table {border-collapse: collapse !important;}
 			/* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
 			/* ========== Page Styles ========== */
 			body, #bodyTable {
@@ -39,6 +40,11 @@
 				margin-left: 0;
 				text-align: center;
 			}
+
+            p {
+                margin: 0;
+            	padding: 0;
+            }
 
 			caption {
 				color: #a9a9a9 !important;
@@ -199,7 +205,7 @@
                                         </tr>
                                     </table>
                                     {% for course in courses %}
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="classTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: collapse !important;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="classTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: separate !important;">
                                             <caption style="font-family: 'Montserrat', sans-serif;font-size: 14px;font-style: normal;font-weight: normal;line-height: 100%;letter-spacing: normal;margin-top: 0;margin-right: 0;margin-bottom: 0;margin-left: 10px;text-align: left;color: #a9a9a9 !important;">
                                                 {{ course.course_id }}
                                             </caption>
@@ -210,12 +216,12 @@
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p>{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
+                                                            <p style="margin: 0;padding: 0;">{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
                                                         {% endfor %}
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p>{{ timeslot.location }}</p>
+                                                            <p style="margin: 0;padding: 0;">{{ timeslot.location }}</p>
                                                         {% endfor %}
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
