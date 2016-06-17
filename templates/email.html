@@ -205,23 +205,23 @@
                                             </caption>
                                             {% for class in course.classes %}
                                                 <tr style="background-color: {{ loop.cycle('#7ac18a', '#85ce95') }};">
-                                                    <td valign="top" class="class-type" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-left-radius: 5px;{% endif %}{% if loop.last %}border-bottom-left-radius: 5px;{% endif %}border-left: 1px solid #dbdee4;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
                                                         {{ class.type }}
                                                     </td>
-                                                    <td valign="top" class="class-time" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border: 1px solid #dbdee4;text-align: center;width: 30%;">
-                                                        {% if class.day and class.start_time and class.end_time %}
-                                                            {{ class.day }} {{ class.start_time }}-{{ class.end_time }}
-                                                        {% endif %}
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                        {% for timeslot in class.timeslots %}
+                                                            <p>{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
+                                                        {% endfor %}
                                                     </td>
-                                                    <td valign="top" class="class-location" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border: 1px solid #dbdee4;text-align: center;width: 30%;">
-                                                        {% if class.location %}
-                                                            {{ class.location }}
-                                                        {% endif %}
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                        {% for timeslot in class.timeslots %}
+                                                            <p>{{ timeslot.location }}</p>
+                                                        {% endfor %}
                                                     </td>
-                                                    <td valign="top" class="class-status" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
                                                         {{ class.status }}
                                                     </td>
-                                                    <td valign="top" class="class-enrolled" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border: 1px solid #dbdee4;text-align: center;width: 15%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-right-radius: 5px;{% endif %}{% if loop.last %}border-bottom-right-radius: 5px;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
                                                         {{ class.enrolled }}/{{ class.capacity }}
                                                     </td>
                                                 </tr>

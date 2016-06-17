@@ -56,8 +56,8 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         capacity = int(m.group(2))
         # separate the time from the place
 
-        logging.debug('Storing class with class id:', klass_id)
-        logging.debug('Class row fields:', [d.get_text() for d in row])
+        logging.debug('Storing class with class id: %d' % klass_id)
+        logging.debug('Class row fields: %s' % [d.get_text() for d in row])
 
         # if this is a new class or the timeslot raw text has changed since we last saw it
         if klass_id not in klasses_to_delete or (
@@ -67,6 +67,8 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                 logging.debug('Recreating timeslots for klass %s' % klasses_to_delete[klass_id])
                 for timeslot in klasses_to_delete[klass_id].timeslots:
                     db_session.delete(timeslot)
+
+            mentioned_times = set()
 
             for time_and_place_part in time_and_place.split(';'):
                 m = re.search(r'(\w+) +(\d+(?::\d+)?(?:-\d+(?::\d+)?)?) *#? *(?: *\((?:.*, *)*(.*?)\))?',
@@ -82,20 +84,24 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                         start_time = hour_of_day_to_seconds_since_midnight(time)
                         end_time = start_time + 60 * 60
 
-                    location = m.group(3)
-                    # as a last resort, filter out any locations we've extracted that don't have a letter in them
-                    # also filter out anything that looks like a range of weeks (eg. w1-12)
-                    if location is not None and (
-                            not re.search(r'[a-zA-Z]', location) or
-                            re.match(r'^w\d+(?:-\d+)?$', location)):
-                        location = None
+                    # only add a timeslot for the first time a specific day/time is mentioned to avoid situations where
+                    # the location changes throughout the semester - we'll only list the first location
+                    if (day, time) not in mentioned_times:
+                        mentioned_times.add((day, time))
+                        location = m.group(3)
+                        # as a last resort, filter out any locations we've extracted that don't have a letter in them
+                        # also filter out anything that looks like a range of weeks (eg. w1-12)
+                        if location is not None and (
+                                not re.search(r'[a-zA-Z]', location) or
+                                re.match(r'^w\d+(?:-\d+)?$', location)):
+                            location = None
 
-                    timeslot = Timeslot(klass_id=klass_id,
-                                        day=day,
-                                        start_time=start_time,
-                                        end_time=end_time,
-                                        location=location)
-                    db_session.add(timeslot)
+                        timeslot = Timeslot(klass_id=klass_id,
+                                            day=day,
+                                            start_time=start_time,
+                                            end_time=end_time,
+                                            location=location)
+                        db_session.add(timeslot)
 
         klass = Klass(klass_id=klass_id,
                       course_id=course_id,

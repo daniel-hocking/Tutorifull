@@ -332,14 +332,14 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     // make sure at least one class is selected
     if (selectedClassRows.size == 0) {
         noSelectedClassesWarning.classList.remove('hidden');
-        window.location = "#step4";
+        window.location = "#confirm";
         error = true;
     }
 
     // make sure they entered a valid contact
     if (!contactGiven) {
         noContactInfoWarning.classList.remove('hidden');
-        window.location = "#step3";
+        window.location = "#contact";
         error = true;
     }
 
