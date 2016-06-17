@@ -36,7 +36,7 @@ def send_alerts(alerts):
     successful_alerts = []
 
     for alert in alerts:
-        alerts_by_contact[(alert.contact, alert.contact_type)].append(alert.klass)
+        alerts_by_contact[(alert.contact, alert.contact_type)].append(alert)
 
     for contact, alerts in alerts_by_contact.iteritems():
         contact, contact_type = contact
@@ -47,7 +47,7 @@ def send_alerts(alerts):
                 alert_by_sms(contact, alerts)
             elif contact_type == CONTACT_TYPE_YO:
                 alert_by_yo(contact, alerts)
-            successful_alerts.append(alerts)
+            successful_alerts += alerts
         except:
             logging.exception('Error sending these alerts: %s' % alerts)
 
@@ -104,21 +104,6 @@ def alert_by_sms(phone_number, alerts):
              "A spot has opened up in a class: %s" % create_alert_link(a.klass.klass_id for a in alerts))
 
 
-def alert_by_yo(username, alerts):
-    send_yo(username,
-            create_alert_link(a.klass.klass_id for a in alerts),
-            'A spot has opened up in a class!')
-
-
-def send_yo(username, link=None, text=None):
-    requests.post("https://api.justyo.co/yo/",
-                  data={'api_token': YO_API_KEY,
-                        'username': username,
-                        'link': link,
-                        'text': text})
-    # TODO: make sure this returns the right http code
-
-
 def get_telstra_api_access_token():
     access_token = get_redis().get('telstra_api_access_token')
     if access_token is not None:
@@ -145,4 +130,22 @@ def send_sms(phone_number, message):
                           'to': phone_number,
                           'body': message
                       }))
-    # TODO: make sure this returns the right http code
+    assert r.status_code == 202, 'While sending an sms, Telstra api returned status code %d' % r.status_code
+
+
+def alert_by_yo(username, alerts):
+    send_yo(username,
+            create_alert_link(a.klass.klass_id for a in alerts),
+            'A spot has opened up in a class!')
+
+
+def send_yo(username, link=None, text=None):
+    r = requests.post("https://api.justyo.co/yo/",
+                      data={'api_token': YO_API_KEY,
+                            'username': username,
+                            'link': link,
+                            'text': text})
+
+    # either we succeed to send the yo, or the username doesn't exist - either way we want the alerts to be deleted
+    assert (r.status_code == 200 or
+            r.status_code == 404), 'While sending a yo, yo api returned status code %d' % r.status_code

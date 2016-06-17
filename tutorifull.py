@@ -65,6 +65,7 @@ def show_alert():
 @app.route('/api/alerts', methods=['POST'])
 def save_alerts():
     # get info from the form
+    # TODO: validate the contact info server side
     post_data = request.get_json()
     if post_data.get('email'):
         contact = post_data['email'].lower()
@@ -99,8 +100,12 @@ def save_alerts():
 @app.route('/api/courses', methods=['GET'])
 def search_courses():
     search_query = '%' + request.args.get('q', '') + '%'
-    courses = db_session.query(Course).filter(or_(Course.name.ilike(search_query),
-                                                  Course.compound_id.ilike(search_query))).limit(MAX_SEARCH_RESULTS).all()
+    courses = db_session\
+        .query(Course)\
+        .filter(or_(Course.name.ilike(search_query),
+                    Course.compound_id.ilike(search_query)))\
+        .limit(MAX_SEARCH_RESULTS)\
+        .all()
     courses = [c.to_dict() for c in courses]
     return json.dumps(courses)
 
