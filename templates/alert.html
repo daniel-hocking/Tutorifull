@@ -3,7 +3,11 @@
 {% block body %}
 <div class="row">
     <div class="text-box">
-        These classes now have a space for you to enrol.
+        {% if success_page %}
+            We'll send you {{ contact_type }} to {{ contact }} when a spot opens up.
+        {% else %}
+            These classes now have a space for you to enrol.
+        {% endif %}
     </div>
 </div>
 
@@ -14,7 +18,7 @@
                 {{ course.course_id }}
             </caption>
             {% for class in course.classes %}
-                <tr class="row selected">
+                <tr class="selected">
                     <td class="class-type">
                         {{ class.type }}
                     </td>

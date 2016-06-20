@@ -217,10 +217,13 @@ function onSelectedClassClick() {
 }
 
 
-// onkeyup handlers for contact inputs
+// onkeyup and onchange handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
                              function(contactInput) {
                                  contactInput.onkeyup = function() {
+                                     clearOtherContactInputs(contactInput);
+                                 };
+                                 contactInput.onchange = function() {
                                      clearOtherContactInputs(contactInput);
                                  };
                              }
@@ -245,7 +248,6 @@ Array.prototype.forEach.call(contactInputs,
                                      } else {
                                          contactInput.classList.remove('valid', 'invalid');
                                      }
-                                     noContactInfoWarning.classList.add('hidden');
                                  };
                              }
 );
@@ -255,6 +257,7 @@ function validateEmail() {
     if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
         emailInput.classList.remove('invalid');
         emailInput.classList.add('valid');
+        noContactInfoWarning.classList.add('hidden');
     } else {
         emailInput.classList.remove('valid');
         emailInput.classList.add('invalid');
@@ -262,11 +265,12 @@ function validateEmail() {
 }
 
 function validatePhoneNumber() {
-    var phoneNumber = phoneNumberInput.value.replace(/\D/g, '');
-    if (/^04\d{8}$/.test(phoneNumber)) {
+    var phoneNumber = phoneNumberInput.value.replace(/[^0-9+]/g, '');
+    if (/^(04|\+?614)\d{8}$/.test(phoneNumber)) {
         phoneNumberInput.value = phoneNumber;
         phoneNumberInput.classList.remove('invalid');
         phoneNumberInput.classList.add('valid');
+        noContactInfoWarning.classList.add('hidden');
     } else {
         phoneNumberInput.classList.remove('valid');
         phoneNumberInput.classList.add('invalid');
@@ -276,9 +280,9 @@ function validatePhoneNumber() {
 function validateYoName() {
     var yoName = yoNameInput.value;
     if (/^(\d|\w)+$/.test(yoName)) {
-        // do it sync because otherwise the errors show up not all at the same time and that's confusing
         httpGetAsync('/api/validateyoname?yoname=' + yoName, function(response) {
             if (yoNameInput.value != yoName) {
+                // if they've changed the value since we started verifying
                 return;
             }
             var exists = JSON.parse(response).exists;
@@ -286,6 +290,7 @@ function validateYoName() {
                 yoNameInput.value = yoName.toUpperCase();
                 yoNameInput.classList.remove('invalid');
                 yoNameInput.classList.add('valid');
+                noContactInfoWarning.classList.add('hidden');
             } else {
                 yoNameInput.classList.remove('valid');
                 yoNameInput.classList.add('invalid');

@@ -4,23 +4,22 @@ from __future__ import (
 )
 
 import json
-import requests
+import re
 
 from flask import (
-    abort,
     Flask,
     render_template,
     request,
 )
 from sqlalchemy.sql.expression import or_
 
-from config import YO_API_KEY
 from constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
     CONTACT_TYPE_YO,
     MAX_SEARCH_RESULTS,
 )
+from contact import is_valid_yo_name
 from dbhelper import db_session
 from models import (
     Alert,
@@ -50,14 +49,15 @@ def homepage():
 @app.route('/alert', methods=['GET'])
 def show_alert():
     klass_ids = request.args.get('classids', '')
-    klass_ids = klass_ids.split(',')
+    courses = []
 
-    # get course info from db
-    klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
-    if not klasses:
-        abort(500)  # TODO: render with error
-
-    courses = klasses_to_template_courses(klasses)
+    if klass_ids:
+        klass_ids = klass_ids.split(',')
+        # filter out all non-numeric ids
+        klass_ids = [klass_id for klass_id in klass_ids if re.match(r'^\d+$', klass_id)]
+        # get course info from db
+        klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
+        courses = klasses_to_template_courses(klasses)
 
     return render_template('alert.html', courses=courses)
 
@@ -65,25 +65,38 @@ def show_alert():
 @app.route('/api/alerts', methods=['POST'])
 def save_alerts():
     # get info from the form
-    # TODO: validate the contact info server side
+    # if something is invalid or they haven't given a contact or chosen classes just show an error page because they've
+    # gotten past the javascript error handling somehow and repopulating the chosen classes list would be super annoying
+    # I guess it's still TODO worthy (I'll probably never do it though)
     post_data = request.get_json()
     if post_data.get('email'):
-        contact = post_data['email'].lower()
+        contact = post_data['email']
         contact_type = CONTACT_TYPE_EMAIL
+        if not re.match(r'^[^@]+@[^@]+\.[^@]+$', contact):
+            return render_template('error.html',
+                                   error='Please enter a valid email address')
     elif post_data.get('phonenumber'):
-        contact = post_data['phonenumber']
+        contact = re.sub(r'[^0-9+]', '', post_data['phonenumber'])
         contact_type = CONTACT_TYPE_SMS
+        if not re.match(r'^(04|\+?614)\d{8}$', contact):
+            return render_template('error.html',
+                                   error='Please enter a valid Australian phone number')
     elif post_data.get('yoname'):
         contact = post_data['yoname'].upper()
         contact_type = CONTACT_TYPE_YO
+        if not re.match(r'^(\d|\w)+$', contact) or not is_valid_yo_name(contact):
+            return render_template('error.html',
+                                   error='Please enter a valid YO username')
     else:
-        abort(500)  # TODO: render homepage with error
+        return render_template('error.html',
+                               error='Please enter some contact info before submitting.')
 
     # get course info from db
     klass_ids = post_data.get('classids', [])
     klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
     if not klasses:
-        abort(500)  # TODO: render homepage with error
+        return render_template('error.html',
+                               error='Please select at least one class before submitting.')
 
     for klass in klasses:
         alert = Alert(klass_id=klass.klass_id, contact_type=contact_type, contact=contact)
@@ -91,10 +104,11 @@ def save_alerts():
     db_session.commit()
     courses = klasses_to_template_courses(klasses)
 
-    return render_template('success.html',
+    return render_template('alert.html',
                            contact_type=contact_type_description(contact_type),
                            contact=contact,
-                           courses=courses)
+                           courses=courses,
+                           success_page=True)
 
 
 @app.route('/api/courses', methods=['GET'])
@@ -121,8 +135,7 @@ def course_info(course_id):
 @app.route('/api/validateyoname', methods=['GET'])
 def validate_yo_name():
     yo_name = request.args.get('yoname', '')
-    r = requests.get('https://api.justyo.co/check_username/', params={'api_token': YO_API_KEY, 'username': yo_name})
-    return r.text
+    return json.dumps({'exists': is_valid_yo_name(yo_name)})
 
 
 if __name__ == '__main__':

@@ -27,10 +27,10 @@
     </div>
 </div>
 
-<div class="column cross-centered">
+<div class="row justify-centered">
     <div class="search-parent">
         <div class="search-icon"></div>
-        <input class="search-box" type="text" name="coursesearch" placeholder="Search for a course"></input>
+        <input class="search-box" type="text" name="coursesearch" autocomplete="off" placeholder="Search for a course"/>
         <ul class="course-search-results"></ul>
     </div>
 </div>
@@ -75,17 +75,23 @@
     <div class="column cross-centered contact-info">
         <div class="row">
             <div class="email-icon"></div>
-            <input class="contact-input-box" type="email" name="email" placeholder="Email"></input>
+            <form>
+                <input class="contact-input-box" type="email" autocomplete="email" name="email" placeholder="Email"/>
+            </form>
         </div>
             <div class="contact-or">or</div>
         <div class="row">
             <div class="sms-icon"></div>
-            <input class="contact-input-box" type="text" name="phonenumber" placeholder="Phone Number"></input>
+            <form>
+                <input class="contact-input-box" type="tel" autocomplete="tel" name="phonenumber" placeholder="Phone Number"/>
+            </form>
         </div>
             <div class="contact-or">or</div>
         <div class="row">
             <div class="yo-icon"></div>
-            <input class="contact-input-box" type="text" name="yoname" placeholder="Yo Username"></input>
+            <form>
+                <input class="contact-input-box" type="text" autocomplete="on" name="yoname" placeholder="Yo Username"/>
+            </form>
         </div>
     </div>
 </div>
@@ -112,7 +118,7 @@
     </div>
 </div>
 <div class="row justify-centered">
-    <input class="alert-me-button" type="submit" name="submit" value="Alert Me"></input>
+    <input class="alert-me-button" type="submit" name="submit" value="Alert Me" formnovalidate/>
 </div>
 {% endblock %}
 

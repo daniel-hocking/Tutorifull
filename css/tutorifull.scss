@@ -160,6 +160,8 @@ caption {
 .search-box {
     @extend .input-box;
     padding-left: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
     border-radius: 100px;
 }
 
@@ -210,8 +212,6 @@ caption {
     }
 
     tr {
-        background-color: $table-light-color;
-        transition: background-color 0.1s;
         cursor: pointer;
     }
 
@@ -239,24 +239,26 @@ caption {
         }
     }
 
-    tr:nth-child(even) {
+    tr:nth-child(even) td {
         background-color: $table-dark-color;
     }
 
-    tr:hover {
+    tr:hover td {
         background-color: $table-hover-color;
     }
 
-    tr.selected {
+    tr.selected td {
         background-color: $table-selected-dark-color;
     }
 
-    tr.selected:nth-child(even) {
+    tr.selected:nth-child(even) td {
         background-color: $table-selected-light-color;
     }
 
     td {
         padding: 15px 0 15px 0;
+        background-color: $table-light-color;
+        transition: background-color 0.1s;
         border-right: 1px solid $box-border-color;
         border-bottom: 1px solid $box-border-color;
         text-align: center;
@@ -337,11 +339,17 @@ caption {
     @media only screen and (min-width:$breakpoint-small) {
         width: 60%;
     }
+
+    form {
+        width: 100%;
+    }
 }
 
 .contact-input-box {
     @extend .input-box;
     padding-left: 42px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 .contact-input-box.valid {
     background-color: green;
@@ -368,10 +376,6 @@ caption {
     margin: 10px 0 10px 0;
     color: $on-background-font-color;
     text-align: center;
-}
-
-.success-classes tr {
-    cursor: default;
 }
 
 .alert-classes tr {

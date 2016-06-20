@@ -149,3 +149,9 @@ def send_yo(username, link=None, text=None):
     # either we succeed to send the yo, or the username doesn't exist - either way we want the alerts to be deleted
     assert (r.status_code == 200 or
             r.status_code == 404), 'While sending a yo, yo api returned status code %d' % r.status_code
+
+
+def is_valid_yo_name(yo_name):
+    r = requests.get('https://api.justyo.co/check_username/',
+                     params={'api_token': YO_API_KEY, 'username': yo_name}).json()
+    return r['exists']
