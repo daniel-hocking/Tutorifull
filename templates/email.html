@@ -19,7 +19,7 @@
 			body {margin: 0; padding: 0;}
 			img {border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
 			body, #bodyTable, #bodyCell {height: 100% !important; margin: 0; padding: 0; width: 100% !important;}
-            table {border-collapse: collapse !important;}
+			table {border-collapse: collapse !important;}
 			/* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
 			/* ========== Page Styles ========== */
 			body, #bodyTable {
@@ -102,6 +102,7 @@
                 padding-left: 15px;
                 padding-right: 15px;
                 border: 1px solid #dbdee4;
+                border-radius: 5px;
                 text-align: left;
             }
             /* ========== Class Table Styles ========== */
@@ -119,6 +120,7 @@
                 border-right: 1px solid #dbdee4;
                 border-bottom: 1px solid #dbdee4;
                 text-align: center;
+                vertical-align: middle;
             }
             .classTable td.class-type {
                 width: 12.5%;
@@ -138,6 +140,10 @@
 
             .classTable td.class-location {
                 width: 30%;
+            }
+
+            .classTable td p {
+                margin-bottom: 10px;
             }
 			/* ========== Footer Styles ========== */
 			.footerContent {
@@ -199,7 +205,7 @@
                                 <td valign="top" class="bodyContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;line-height: 150%;padding-top: 20px;padding-right: 0px;padding-bottom: 20px;padding-left: 0px;text-align: left;">
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" class="textTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: collapse !important;">
                                         <tr style="background-color: #85ce95;">
-                                            <td valign="top" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;background-color: #ffffff;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;padding-left: 15px;padding-right: 15px;border: 1px solid #dbdee4;text-align: left;">
+                                            <td valign="top" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;background-color: #ffffff;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;padding-left: 15px;padding-right: 15px;border: 1px solid #dbdee4;border-radius: 5px;text-align: left;">
                                                 These classes now have a space for you to enrol.
                                             </td>
                                         </tr>
@@ -211,23 +217,23 @@
                                             </caption>
                                             {% for class in course.classes %}
                                                 <tr style="background-color: {{ loop.cycle('#7ac18a', '#85ce95') }};">
-                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-left-radius: 5px;{% endif %}{% if loop.last %}border-bottom-left-radius: 5px;{% endif %}border-left: 1px solid #dbdee4;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-left-radius: 5px;{% endif %}{% if loop.last %}border-bottom-left-radius: 5px;{% endif %}border-left: 1px solid #dbdee4;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 12.5%;">
                                                         {{ class.type }}
                                                     </td>
-                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 30%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p style="margin: 0;padding: 0;">{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
+                                                            <p style="margin: {% if loop.last %}0{% else %}10px{% endif %};padding: 0;">{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
                                                         {% endfor %}
                                                     </td>
-                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 30%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p style="margin: 0;padding: 0;">{{ timeslot.location }}</p>
+                                                            <p style="margin: {% if loop.last %}0{% else %}10px{% endif %};padding: 0;">{{ timeslot.location }}</p>
                                                         {% endfor %}
                                                     </td>
-                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 12.5%;">
                                                         {{ class.status }}
                                                     </td>
-                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-right-radius: 5px;{% endif %}{% if loop.last %}border-bottom-right-radius: 5px;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;width: 12.5%;">
+                                                    <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;border-top-right-radius: 5px;{% endif %}{% if loop.last %}border-bottom-right-radius: 5px;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 15%;">
                                                         {{ class.enrolled }}/{{ class.capacity }}
                                                     </td>
                                                 </tr>

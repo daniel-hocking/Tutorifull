@@ -260,6 +260,15 @@ caption {
         border-right: 1px solid $box-border-color;
         border-bottom: 1px solid $box-border-color;
         text-align: center;
+        vertical-align: middle;
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        p:last-of-type {
+            margin-bottom: 0;
+        }
     }
 
     td:first-of-type {
