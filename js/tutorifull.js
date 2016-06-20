@@ -37,13 +37,9 @@ new autoComplete({
     minChars: 2,
     delay: 300,
     source: function(term, suggest){
-        if (term == '') {
-            suggest([]);
-        } else {
-            httpGetAsync('/api/courses?q=' + term, function(data){
-                suggest(JSON.parse(data));
-            });
-        }
+        httpGetAsync('/api/courses?q=' + term, function(data){
+            suggest(JSON.parse(data));
+        });
     },
     renderItem: function (item, search){
         var resultItem = createElement('li', 'course-search-result');

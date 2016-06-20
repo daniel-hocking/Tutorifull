@@ -222,12 +222,12 @@
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 30%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p style="margin: {% if loop.last %}0{% else %}10px{% endif %};padding: 0;">{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
+                                                            <p style="margin: 0;{% if not loop.last %}margin-bottom: 10px;{% endif %}padding: 0;">{{ timeslot.day }} {{ timeslot.start_time }}-{{ timeslot.end_time }}</p>
                                                         {% endfor %}
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 30%;">
                                                         {% for timeslot in class.timeslots %}
-                                                            <p style="margin: {% if loop.last %}0{% else %}10px{% endif %};padding: 0;">{{ timeslot.location }}</p>
+                                                            <p style="margin: 0;{% if not loop.last %}margin-bottom: 10px;{% endif %}padding: 0;">{{ timeslot.location }}</p>
                                                         {% endfor %}
                                                     </td>
                                                     <td valign="top" class="class-status" style="{% if loop.first %}border-top: 1px solid #dbdee4;{% endif %}-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;border-right: 1px solid #dbdee4;border-bottom: 1px solid #dbdee4;text-align: center;vertical-align: middle;width: 12.5%;">
