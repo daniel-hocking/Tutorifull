@@ -19,8 +19,8 @@
 			body {margin: 0; padding: 0;}
 			img {border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
 			body, #bodyTable, #bodyCell {height: 100% !important; margin: 0; padding: 0; width: 100% !important;}
-			table {border-collapse: collapse !important;}
-			/* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
+            table {border-collapse: separate;}
+            /* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
 			/* ========== Page Styles ========== */
 			body, #bodyTable {
 				background-color: #e9eaed;
@@ -186,11 +186,11 @@
     </head>
     <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;margin: 0;padding: 0;background-color: #e9eaed;height: 100% !important;width: 100% !important;">
     	<center>
-        	<table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0;padding: 0;background-color: #e9eaed;border-collapse: collapse !important;height: 100% !important;width: 100% !important;">
+        	<table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0;padding: 0;background-color: #e9eaed;border-collapse: separate;height: 100% !important;width: 100% !important;">
             	<tr>
                 	<td align="center" valign="top" id="bodyCell" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin: 0;padding: 0;height: 100% !important;width: 100% !important;">
                         <!-- HEADER TABLE -->
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;height: 80px;background-color: #7ac18a;border-bottom: 7px solid #38a370;border-collapse: collapse !important;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;height: 80px;background-color: #7ac18a;border-bottom: 7px solid #38a370;border-collapse: separate;">
                             <tr>
                                 <td align="center" valign="top" class="headerContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #214433;font-family: 'Montserrat', sans-serif;font-size: 20px;font-weight: bold;line-height: 100%;padding-top: 0;padding-right: 0;padding-bottom: 0;padding-left: 0;text-align: left;vertical-align: middle;">
                                     <h1 style="display: block;font-family: 'Montserrat', sans-serif;font-size: 32px;font-style: normal;font-weight: bold;line-height: 100%;letter-spacing: normal;margin-top: 0;margin-right: 0;margin-bottom: 0;margin-left: 0;text-align: center;color: #214433 !important;">Tutorifull</h1>
@@ -198,10 +198,10 @@
                             </tr>
                         </table>
                         <!-- CONTENT TABLE -->
-                        <table border="0" cellpadding="0" cellspacing="0" width="95%" id="templateBody" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;border-collapse: collapse !important;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="95%" id="templateBody" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;border-collapse: separate;">
                             <tr>
                                 <td valign="top" class="bodyContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;line-height: 150%;padding-top: 20px;padding-right: 0px;padding-bottom: 20px;padding-left: 0px;text-align: left;">
-                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="textTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: collapse !important;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="textTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: separate;">
                                         <tr style="background-color: #85ce95;">
                                             <td valign="top" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;background-color: #ffffff;font-family: 'Montserrat', sans-serif;font-size: 14px;padding-top: 15px;padding-bottom: 15px;padding-left: 15px;padding-right: 15px;border: 1px solid #dbdee4;border-radius: 5px;text-align: left;">
                                                 These classes now have a space for you to enrol.
@@ -209,7 +209,7 @@
                                         </tr>
                                     </table>
                                     {% for course in courses %}
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="classTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: separate !important;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="classTable" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;margin-top: 20px;border-collapse: separate;">
                                             <caption style="font-family: 'Montserrat', sans-serif;font-size: 14px;font-style: normal;font-weight: normal;line-height: 100%;letter-spacing: normal;margin-top: 0;margin-right: 0;margin-bottom: 0;margin-left: 10px;text-align: left;color: #a9a9a9 !important;">
                                                 {{ course.course_id }}
                                             </caption>
@@ -242,7 +242,7 @@
                             </tr>
                         </table>
                         <!-- FOOTER TABLE -->
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;border-collapse: collapse !important;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;border-collapse: separate;">
                             <tr>
                                 <td valign="top" class="footerContent" style="padding-top: 20px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #a9a9a9;font-family: 'Montserrat', sans-serif;font-size: 14px;line-height: 150%;padding-right: 20px;padding-bottom: 20px;padding-left: 20px;text-align: center;">
                                 	<p style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;">Made By a Dome</p>
