@@ -1,0 +1,13 @@
+{
+	"name": "Tutorifull",
+	"icons": [
+		{
+			"src": "\/static\/favicon\/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image\/png"
+		}
+	],
+	"theme_color": "#38a370",
+	"start_url": "https:\/\/tutorifull.chybby.com",
+	"display": "standalone"
+}

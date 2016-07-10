@@ -5,11 +5,13 @@ from __future__ import (
 
 import json
 import re
+import os
 
 from flask import (
     Flask,
     render_template,
     request,
+    send_from_directory,
 )
 from sqlalchemy.sql.expression import or_
 
@@ -44,6 +46,12 @@ def shutdown_session(exception=None):
 @app.route('/', methods=['GET'])
 def homepage():
     return render_template('homepage.html')
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static/favicon'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/alert', methods=['GET'])

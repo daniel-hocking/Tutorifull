@@ -216,18 +216,28 @@ function onSelectedClassClick() {
     }
 }
 
+// onkeyup and onchange handler for contact inputs
+function onContactInputChange(contactInput) {
+    clearOtherContactInputs(contactInput);
+    contactInput.parentElement.classList.remove('valid', 'invalid');
+    contactInput.parentElement.classList.add('verifying');
+}
 
-// onkeyup and onchange handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
                              function(contactInput) {
-                                 contactInput.onkeyup = function() {
-                                     clearOtherContactInputs(contactInput);
-                                 };
-                                 contactInput.onchange = function() {
-                                     clearOtherContactInputs(contactInput);
-                                 };
+                                 contactInput.onkeydown = function(evt) {
+                                     // ignore tabs
+                                     if (evt.keyCode != 9) {
+                                         onContactInputChange(contactInput);
+                                     }
+                                 }
+                                 contactInput.oninput = function() {
+                                     onContactInputChange(contactInput);
+                                 }
                              }
 );
+
+
 
 // onblur handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
@@ -246,7 +256,7 @@ Array.prototype.forEach.call(contactInputs,
                                                 validateYoName();
                                          }
                                      } else {
-                                         contactInput.parentElement.classList.remove('valid', 'invalid');
+                                         contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
                                      }
                                  };
                              }
@@ -255,11 +265,11 @@ Array.prototype.forEach.call(contactInputs,
 function validateEmail() {
     var email = emailInput.value
     if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-        emailInput.parentElement.classList.remove('invalid');
+        emailInput.parentElement.classList.remove('invalid', 'verifying');
         emailInput.parentElement.classList.add('valid');
         noContactInfoWarning.classList.add('hidden');
     } else {
-        emailInput.parentElement.classList.remove('valid');
+        emailInput.parentElement.classList.remove('valid', 'verifying');
         emailInput.parentElement.classList.add('invalid');
     }
 }
@@ -268,11 +278,11 @@ function validatePhoneNumber() {
     var phoneNumber = phoneNumberInput.value.replace(/[^0-9+]/g, '');
     if (/^(04|\+?614)\d{8}$/.test(phoneNumber)) {
         phoneNumberInput.value = phoneNumber;
-        phoneNumberInput.parentElement.classList.remove('invalid');
+        phoneNumberInput.parentElement.classList.remove('invalid', 'verifying');
         phoneNumberInput.parentElement.classList.add('valid');
         noContactInfoWarning.classList.add('hidden');
     } else {
-        phoneNumberInput.parentElement.classList.remove('valid');
+        phoneNumberInput.parentElement.classList.remove('valid', 'verifying');
         phoneNumberInput.parentElement.classList.add('invalid');
     }
 }
@@ -288,16 +298,16 @@ function validateYoName() {
             var exists = JSON.parse(response).exists;
             if (exists) {
                 yoNameInput.value = yoName.toUpperCase();
-                yoNameInput.parentElement.classList.remove('invalid');
+                yoNameInput.parentElement.classList.remove('invalid', 'verifying');
                 yoNameInput.parentElement.classList.add('valid');
                 noContactInfoWarning.classList.add('hidden');
             } else {
-                yoNameInput.parentElement.classList.remove('valid');
+                yoNameInput.parentElement.classList.remove('valid', 'verifying');
                 yoNameInput.parentElement.classList.add('invalid');
             }
         });
     } else {
-        yoNameInput.parentElement.classList.remove('valid');
+        yoNameInput.parentElement.classList.remove('valid', 'verifying');
         yoNameInput.parentElement.classList.add('invalid');
     }
 }
@@ -307,7 +317,7 @@ function clearOtherContactInputs(chosenInput) {
                                  function(contactInput) {
                                      if (contactInput != chosenInput) {
                                          contactInput.value = '';
-                                         contactInput.parentElement.classList.remove('valid', 'invalid');
+                                         contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
                                      }
                                  }
     );
