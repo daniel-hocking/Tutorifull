@@ -2,9 +2,9 @@ var searchBox = document.getElementsByClassName('search-box')[0];
 var courseSearchResults = document.getElementsByClassName('course-search-results')[0];
 var classSearchResults = document.getElementsByClassName('class-search-results')[0];
 var contactInputs = document.getElementsByClassName('contact-input-box');
-var emailInput = contactInputs[0];
-var phoneNumberInput = contactInputs[1];
-var yoNameInput = contactInputs[2];
+var emailInput = document.getElementsByName('email')[0];
+var phoneNumberInput = document.getElementsByName('phonenumber')[0];
+var yoNameInput = document.getElementsByName('yoname')[0];
 var confirmClasses = document.getElementsByClassName('confirm-classes')[0];
 var searchedClassRows = new Map(); // classes under the select step
 var selectedCourseTables = new Map(); // courses under the confirm step
@@ -246,7 +246,7 @@ Array.prototype.forEach.call(contactInputs,
                                                 validateYoName();
                                          }
                                      } else {
-                                         contactInput.classList.remove('valid', 'invalid');
+                                         contactInput.parentElement.classList.remove('valid', 'invalid');
                                      }
                                  };
                              }
@@ -255,12 +255,12 @@ Array.prototype.forEach.call(contactInputs,
 function validateEmail() {
     var email = emailInput.value
     if (/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-        emailInput.classList.remove('invalid');
-        emailInput.classList.add('valid');
+        emailInput.parentElement.classList.remove('invalid');
+        emailInput.parentElement.classList.add('valid');
         noContactInfoWarning.classList.add('hidden');
     } else {
-        emailInput.classList.remove('valid');
-        emailInput.classList.add('invalid');
+        emailInput.parentElement.classList.remove('valid');
+        emailInput.parentElement.classList.add('invalid');
     }
 }
 
@@ -268,12 +268,12 @@ function validatePhoneNumber() {
     var phoneNumber = phoneNumberInput.value.replace(/[^0-9+]/g, '');
     if (/^(04|\+?614)\d{8}$/.test(phoneNumber)) {
         phoneNumberInput.value = phoneNumber;
-        phoneNumberInput.classList.remove('invalid');
-        phoneNumberInput.classList.add('valid');
+        phoneNumberInput.parentElement.classList.remove('invalid');
+        phoneNumberInput.parentElement.classList.add('valid');
         noContactInfoWarning.classList.add('hidden');
     } else {
-        phoneNumberInput.classList.remove('valid');
-        phoneNumberInput.classList.add('invalid');
+        phoneNumberInput.parentElement.classList.remove('valid');
+        phoneNumberInput.parentElement.classList.add('invalid');
     }
 }
 
@@ -288,17 +288,17 @@ function validateYoName() {
             var exists = JSON.parse(response).exists;
             if (exists) {
                 yoNameInput.value = yoName.toUpperCase();
-                yoNameInput.classList.remove('invalid');
-                yoNameInput.classList.add('valid');
+                yoNameInput.parentElement.classList.remove('invalid');
+                yoNameInput.parentElement.classList.add('valid');
                 noContactInfoWarning.classList.add('hidden');
             } else {
-                yoNameInput.classList.remove('valid');
-                yoNameInput.classList.add('invalid');
+                yoNameInput.parentElement.classList.remove('valid');
+                yoNameInput.parentElement.classList.add('invalid');
             }
         });
     } else {
-        yoNameInput.classList.remove('valid');
-        yoNameInput.classList.add('invalid');
+        yoNameInput.parentElement.classList.remove('valid');
+        yoNameInput.parentElement.classList.add('invalid');
     }
 }
 
@@ -307,7 +307,7 @@ function clearOtherContactInputs(chosenInput) {
                                  function(contactInput) {
                                      if (contactInput != chosenInput) {
                                          contactInput.value = '';
-                                         contactInput.classList.remove('valid', 'invalid');
+                                         contactInput.parentElement.classList.remove('valid', 'invalid');
                                      }
                                  }
     );
@@ -323,7 +323,7 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     //find the valid contact
     for(var i=0; i < contactInputs.length; i++) {
         var contactInput = contactInputs[i];
-        if (contactInput.classList.contains('valid')) {
+        if (contactInput.parentElement.classList.contains('valid')) {
             postData[contactInput.name] = contactInput.value;
             contactGiven = true;
             break;
