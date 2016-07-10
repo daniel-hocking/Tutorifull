@@ -216,45 +216,31 @@ function onSelectedClassClick() {
     }
 }
 
-// onkeyup and onchange handler for contact inputs
-function onContactInputChange(contactInput) {
-    clearOtherContactInputs(contactInput);
-    contactInput.parentElement.classList.remove('valid', 'invalid');
-    contactInput.parentElement.classList.add('verifying');
-}
 
+var contactVerificationDelay = 1500;
+
+// oninput handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
                              function(contactInput) {
-                                 contactInput.onkeydown = function(evt) {
-                                     // ignore tabs
-                                     if (evt.keyCode != 9) {
-                                         onContactInputChange(contactInput);
-                                     }
-                                 }
                                  contactInput.oninput = function() {
-                                     onContactInputChange(contactInput);
-                                 }
-                             }
-);
-
-
-
-// onblur handlers for contact inputs
-Array.prototype.forEach.call(contactInputs,
-                             function(contactInput) {
-                                 contactInput.onblur = function() {
+                                     clearTimeout(contactInput.timer);
+                                     clearOtherContactInputs(contactInput);
+                                     contactInput.parentElement.classList.remove('valid', 'invalid');
+                                     contactInput.parentElement.classList.add('verifying');
                                      var val = contactInput.value;
+                                     var validationFunction;
                                      if (val.length >= 1) {
                                          switch(contactInput.name) {
                                             case 'email':
-                                                validateEmail();
+                                                validationFunction = validateEmail;
                                                 break;
                                             case 'phonenumber':
-                                                validatePhoneNumber();
+                                                validationFunction = validatePhoneNumber;
                                                 break;
                                             case 'yoname':
-                                                validateYoName();
+                                                validationFunction = validateYoName;
                                          }
+                                         contactInput.timer = setTimeout(validationFunction, contactVerificationDelay);
                                      } else {
                                          contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
                                      }
@@ -316,6 +302,7 @@ function clearOtherContactInputs(chosenInput) {
     Array.prototype.forEach.call(contactInputs,
                                  function(contactInput) {
                                      if (contactInput != chosenInput) {
+                                         clearTimeout(contactInput.timer);
                                          contactInput.value = '';
                                          contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
                                      }
