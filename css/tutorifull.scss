@@ -59,7 +59,7 @@ caption {
     text-align: left;
 }
 
-:focus {
+input:focus {
     outline: none;
     border: 2px solid $dark-green !important;
 }
