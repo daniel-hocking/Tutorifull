@@ -12,6 +12,15 @@ var selectedClassRows = new Map(); // classes under the confirm step
 var noSelectedClassesWarning = document.getElementById("no-selected-classes-warning");
 var noContactInfoWarning = document.getElementById("no-contact-info-warning");
 
+// Create remove function if it doesn't exist (IE....)
+if (!('remove' in Element.prototype)) {
+    Element.prototype.remove = function() {
+        if (this.parentNode) {
+            this.parentNode.removeChild(this);
+        }
+    };
+}
+
 function createElement(type, klass) {
     // helper function that creates a DOM element of a certain type with the given classes
     var element = document.createElement(type);
