@@ -27,7 +27,10 @@ from constants import (
     CONTACT_TYPE_YO,
 )
 from dbhelper import get_redis
-from util import klasses_to_template_courses
+from util import (
+    chunks,
+    klasses_to_template_courses,
+)
 
 
 def send_alerts(alerts):
@@ -100,8 +103,10 @@ Made By a Dome
 
 
 def alert_by_sms(phone_number, alerts):
-    send_sms(phone_number,
-             "A spot has opened up in a class: %s" % create_alert_link(a.klass.klass_id for a in alerts))
+    # send alerts in batches of 10 classes to avoid going over the 160 char limit
+    for alerts_chunk in chunks(alerts, 10):
+        send_sms(phone_number,
+                 "A spot has opened up in a class: %s" % create_alert_link(a.klass.klass_id for a in alerts_chunk))
 
 
 def get_telstra_api_access_token():

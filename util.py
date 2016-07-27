@@ -125,3 +125,9 @@ def klasses_to_template_courses(klasses):
                                                            c.timeslots[0].start_time if c.timeslots else None))]}
                for course_id, classes in sorted(courses_dict.iteritems())]
     return courses
+
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in xrange(0, len(l), n):
+        yield l[i:i + n]
