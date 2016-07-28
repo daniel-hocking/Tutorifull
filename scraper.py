@@ -170,12 +170,13 @@ def wait_until_updated():
         if r.headers['Last-Modified'] == last_time:
             retry_count += 1
             if retry_count > 20:
-                logging.warn('scraper failed to update, too many retries\n')
+                logging.warn('scraper failed to update, too many retries (%d)' % retry_count)
                 return False
 
             time.sleep(10)
             continue
 
+        logging.info('After %d retries, classutil updated at %s' % (retry_count, r.headers['Last-Modified']))
         get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
         break
 
