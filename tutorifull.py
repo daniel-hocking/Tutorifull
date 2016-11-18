@@ -15,6 +15,7 @@ from flask import (
 )
 from sqlalchemy.sql.expression import or_
 
+from config import SENTRY_DSN
 from constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
@@ -36,6 +37,9 @@ from util import (
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+from raven.contrib.flask import Sentry
+sentry = Sentry(app, dsn=SENTRY_DSN)
 
 
 @app.teardown_appcontext

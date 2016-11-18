@@ -5,7 +5,6 @@ from __future__ import (
 
 import argparse
 from datetime import datetime
-import logging
 import re
 import sys
 import time
@@ -13,6 +12,7 @@ import time
 from bs4 import BeautifulSoup
 import requests
 
+from config import SENTRY_DSN
 from constants import (
     CURRENT_SEM,
     POSTGRES_MAX_INT,
@@ -29,7 +29,10 @@ from models import (
     Klass,
     Timeslot,
 )
-from tutorifull import app
+from tutorifull import (
+    app,
+    sentry,
+)
 from util import (
     hour_of_day_to_seconds_since_midnight,
     web_day_to_int_day,
@@ -54,17 +57,12 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         m = re.search(r'(\d+)/(\d+).*', enrollment)
         enrolled = int(m.group(1))
         capacity = int(m.group(2))
-        # separate the time from the place
-
-        logging.debug('Storing class with class id: %d' % klass_id)
-        logging.debug('Class row fields: %s' % [d.get_text() for d in row])
 
         # if this is a new class or the timeslot raw text has changed since we last saw it
         if klass_id not in klasses_to_delete or (
                 hash(time_and_place) % POSTGRES_MAX_INT != klasses_to_delete[klass_id].timeslot_raw_string_hash):
             # if the klass already existed, delete all existing timeslots and recreate them
             if klass_id in klasses_to_delete:
-                logging.debug('Recreating timeslots for klass %s' % klasses_to_delete[klass_id])
                 for timeslot in klasses_to_delete[klass_id].timeslots:
                     db_session.delete(timeslot)
 
@@ -115,7 +113,6 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         klasses_to_delete.pop(klass_id, None)
 
     for klass in klasses_to_delete.values():
-        logging.debug('Deleting klass %s' % klass)
         db_session.delete(klass)
 
 
@@ -155,7 +152,6 @@ def scrape_dept(dept_id, name, page):
     scrape_course_and_classes(course_id, dept_id, name, klasses)
 
     for course in courses_to_delete.values():
-        logging.debug('Deleting course %s' % course)
         db_session.delete(course)
 
     db_session.commit()
@@ -170,13 +166,12 @@ def wait_until_updated():
         if r.headers['Last-Modified'] == last_time:
             retry_count += 1
             if retry_count > 20:
-                logging.warn('scraper failed to update, too many retries (%d)' % retry_count)
+                sentry.captureMessage('scraper failed to update, too many retries')
                 return False
 
             time.sleep(10)
             continue
 
-        logging.info('After %d retries, classutil updated at %s' % (retry_count, r.headers['Last-Modified']))
         get_redis().set('last_classutil_update_time', r.headers['Last-Modified'])
         break
 
@@ -211,7 +206,6 @@ def update_classes(force_update=False):
                 scrape_dept(dept_id, name, link)
 
     for dept in depts_to_delete.values():
-        logging.debug('Deleting dept %s' % dept)
         db_session.delete(dept)
 
     db_session.commit()
@@ -227,7 +221,8 @@ def check_alerts():
     for alert in successful_alerts:
         db_session.delete(alert)
 
-    logging.info('Tried to send %d alerts, %d succeeded' % (len(triggered_alerts), len(successful_alerts)))
+    sentry.captureMessage('Tried to send %d alerts, %d succeeded' % (len(triggered_alerts), len(successful_alerts)),
+                          level='info')
 
     db_session.commit()
 
@@ -240,13 +235,12 @@ if __name__ == '__main__':
                             help="update the database from classutil even if it hasn't updated")
         args = parser.parse_args()
 
-        logging.basicConfig(filename='scraper.log', level=logging.INFO,
-                            format='%(levelname)s:%(asctime)s - %(message)s')
-        logging.getLogger("requests").setLevel(logging.WARNING)
+        sentry.captureMessage('Starting scraper', level='info')
 
-        logging.info('Starting scraper at %s' % datetime.now())
-
-        if not args.no_update:
-            update_classes(args.force_update)
-        if not args.no_alert:
-            check_alerts()
+        try:
+            if not args.no_update:
+                update_classes(args.force_update)
+            if not args.no_alert:
+                check_alerts()
+        except:
+            sentry.captureException()

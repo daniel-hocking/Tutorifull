@@ -8,3 +8,4 @@ DOMAIN_NAME = 'example.com'  # domain name hosting the site
 YO_API_KEY = 'example YO api key'  # YO api key
 TELSTRA_CONSUMER_KEY = 'example telstra consumer key'  # Telstra consumer key
 TELSTRA_CONSUMER_SECRET = 'example telstra consumer secret'  # Telstra consumer secret
+SENTRY_DSN = 'https://1234567890:1234567890@sentry.io/1234567890' # sentry.io DSN, for error logging

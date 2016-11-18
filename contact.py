@@ -8,7 +8,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask import render_template
 import json
-import logging
 import requests
 from subprocess import (
     Popen,
@@ -34,6 +33,8 @@ from util import (
 
 
 def send_alerts(alerts):
+    from tutorifull import sentry
+    
     # organizes the alerts by contact info then sends one alert per contact info
     alerts_by_contact = defaultdict(list)
     successful_alerts = []
@@ -52,7 +53,7 @@ def send_alerts(alerts):
                 alert_by_yo(contact, alerts)
             successful_alerts += alerts
         except:
-            logging.exception('Error sending these alerts: %s' % alerts)
+            sentry.captureException()
 
     return successful_alerts
 
