@@ -15,7 +15,10 @@ from subprocess import (
 )
 
 from config import (
-    DOMAIN_NAME,
+    BASE_DOMAIN_NAME,
+    FULL_DOMAIN_NAME,
+    MAILGUN_DOMAIN_NAME,
+    MAILGUN_API_KEY,
     TELSTRA_CONSUMER_KEY,
     TELSTRA_CONSUMER_SECRET,
     YO_API_KEY,
@@ -34,7 +37,7 @@ from util import (
 
 def send_alerts(alerts):
     from tutorifull import sentry
-    
+
     # organizes the alerts by contact info then sends one alert per contact info
     alerts_by_contact = defaultdict(list)
     successful_alerts = []
@@ -59,7 +62,7 @@ def send_alerts(alerts):
 
 
 def create_alert_link(klass_ids):
-    return 'https://' + DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
+    return 'https://' + FULL_DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
 
 
 def klass_to_text_email_line(klass):
@@ -74,11 +77,6 @@ def klass_to_text_email_line(klass):
 
 
 def alert_by_email(email, alerts):
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = 'A spot has opened up in a class!'
-    msg['From'] = 'tutorifull@' + DOMAIN_NAME + '(Tutorifull)'
-    msg['To'] = email
-
     courses = klasses_to_template_courses(alert.klass for alert in alerts)
 
     text = '''
@@ -92,15 +90,16 @@ Made By a Dome
               for course in courses)
     html = render_template('email.html', courses=courses)
 
-    part1 = MIMEText(text, 'plain')
-    part2 = MIMEText(html, 'html')
+    r = requests.post('https://api.mailgun.net/v3/' + MAILGUN_DOMAIN_NAME + '/messages',
+                      auth=('api', MAILGUN_API_KEY),
+                      data={'from': 'Tutorifull <tutorifull@' + BASE_DOMAIN_NAME + '>',
+                            'to': email,
+                            'subject': 'A spot has opened up in a class!',
+                            'text': text,
+                            'html': html})
 
-    msg.attach(part1)
-    msg.attach(part2)
+    assert r.status_code == 200
 
-    pipe = Popen(['sendmail', '-f', 'tutorifull@%s' % DOMAIN_NAME, '-t', email], stdin=PIPE).stdin
-    pipe.write(msg.as_string())
-    pipe.close()
 
 
 def alert_by_sms(phone_number, alerts):

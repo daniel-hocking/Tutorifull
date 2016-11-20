@@ -11,6 +11,7 @@ $on-background-font-color: #a9a9a9;
 $background-color: #e9eaed;
 $error-font-color: #e60000;
 $warning-font-color: #ef7200;
+$warning-box-background-color: #f8ffc3;
 $light-green: #7ac18a;
 $dark-green: #38a370;
 $box-background-color: #ffffff;
@@ -107,6 +108,7 @@ input:focus {
 .warning-text-box {
     @extend .text-box;
     color: $error-font-color;
+    background-color: $warning-box-background-color;
     margin-bottom: 20px;
     //TODO: add a cross icon or something
 }
