@@ -13,3 +13,5 @@ MAILGUN_API_KEY = 'example Mailgun api key'  # Mailgun api key
 TELSTRA_CONSUMER_KEY = 'example telstra consumer key'  # Telstra consumer key
 TELSTRA_CONSUMER_SECRET = 'example telstra consumer secret'  # Telstra consumer secret
 SENTRY_DSN = 'https://1234567890:1234567890@sentry.io/1234567890' # sentry.io DSN, for error logging
+ASSETREV_MANIFEST_FILE = 'manifest.json'  # Manifest file for content hashed static files (for cache busting)
+SEND_FILE_MAX_AGE_DEFAULT = 31536000  # Max age default for static files

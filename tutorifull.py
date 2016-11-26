@@ -9,10 +9,12 @@ import os
 
 from flask import (
     Flask,
+    g,
     render_template,
     request,
     send_from_directory,
 )
+from flask.ext import assetrev
 from sqlalchemy.sql.expression import or_
 
 from config import SENTRY_DSN
@@ -37,9 +39,16 @@ from util import (
 
 app = Flask(__name__)
 app.config.from_object('config')
+assetrev.AssetRev(app)
 
 from raven.contrib.flask import Sentry
 sentry = Sentry(app, dsn=SENTRY_DSN)
+
+def after_this_request(f):
+    if not hasattr(g, 'after_request_callbacks'):
+        g.after_request_callbacks = []
+    g.after_request_callbacks.append(f)
+    return f
 
 
 @app.teardown_appcontext
@@ -49,6 +58,11 @@ def shutdown_session(exception=None):
 
 @app.route('/', methods=['GET'])
 def homepage():
+    @after_this_request
+    def add_header(response):
+        response.cache_control.no_store = True
+        return response
+
     return render_template('homepage.html')
 
 
@@ -70,6 +84,11 @@ def show_alert():
         # get course info from db
         klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
         courses = klasses_to_template_courses(klasses)
+
+    @after_this_request
+    def add_header(response):
+        response.cache_control.no_store = True
+        return response
 
     return render_template('alert.html', courses=courses)
 
@@ -148,6 +167,18 @@ def course_info(course_id):
 def validate_yo_name():
     yo_name = request.args.get('yoname', '')
     return json.dumps({'exists': is_valid_yo_name(yo_name)})
+
+
+@app.after_request
+def call_after_request_callbacks(response):
+    for callback in getattr(g, 'after_request_callbacks', ()):
+        callback(response)
+
+    if not response.cache_control:
+        response.cache_control.public = True
+        response.cache_control.max_age = 1800
+
+    return response
 
 
 if __name__ == '__main__':

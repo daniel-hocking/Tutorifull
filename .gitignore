@@ -10,3 +10,5 @@ static/css
 static/js
 
 config.py
+
+rev-manifest.json

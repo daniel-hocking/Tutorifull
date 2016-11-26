@@ -46,6 +46,7 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
     course = Course(course_id=course_id, dept_id=dept_id, name=name)
     db_session.merge(course)
 
+    # remove from this as we find classes, eventually only the classes that are no longer on classutil will appear here
     klasses_to_delete = {klass.klass_id: klass for klass in db_session.query(Klass)
                          .filter_by(course_id=course_id, dept_id=dept_id)
                          .all()}
