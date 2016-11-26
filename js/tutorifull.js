@@ -6,11 +6,13 @@ var emailInput = document.getElementsByName('email')[0];
 var phoneNumberInput = document.getElementsByName('phonenumber')[0];
 var yoNameInput = document.getElementsByName('yoname')[0];
 var confirmClasses = document.getElementsByClassName('confirm-classes')[0];
+var noSelectedClassesWarning = document.getElementById("no-selected-classes-warning");
+var noContactInfoWarning = document.getElementById("no-contact-info-warning");
+
 var searchedClassRows = new Map(); // classes under the select step
 var selectedCourseTables = new Map(); // courses under the confirm step
 var selectedClassRows = new Map(); // classes under the confirm step
-var noSelectedClassesWarning = document.getElementById("no-selected-classes-warning");
-var noContactInfoWarning = document.getElementById("no-contact-info-warning");
+
 
 // Create remove function if it doesn't exist (IE....)
 if (!('remove' in Element.prototype)) {
