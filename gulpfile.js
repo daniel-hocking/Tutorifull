@@ -45,8 +45,6 @@ gulp.task('rev', ['css', 'js'], function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch('css/*.scss', ['css']);
-    gulp.watch('js/*.js', ['js']);
-    gulp.watch('static/css/*', ['rev']);
-    gulp.watch('static/js/*', ['rev']);
+    gulp.watch('css/*.scss', ['rev']);
+    gulp.watch('js/*.js', ['rev']);
 });
