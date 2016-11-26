@@ -166,7 +166,6 @@ def wait_until_updated():
         if r.headers['Last-Modified'] == last_time:
             retry_count += 1
             if retry_count > 20:
-                sentry.captureMessage('scraper failed to update, too many retries')
                 return False
 
             time.sleep(10)
