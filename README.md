@@ -39,9 +39,9 @@ Note: These instructions might be incomplete in terms of installing things, you 
  1. Clone the repo into a directory somewhere
     - `git clone https://github.com/Chybby/Tutorifull.git`
  2. Run `npm install`
- 2. Run `gulp`
+ 3. Run `gulp`
     - In order for Gulp to be run automatically as you edit files, run `gulp watch`
- 3. Copy example_config.py and rename it config.py
+ 4. Copy example_config.py and rename it config.py
     - Edit all the example values into useful ones
     - You will need to make various accounts in order to get all the API keys
  5. Create a virtualenv and activate it
@@ -49,9 +49,11 @@ Note: These instructions might be incomplete in terms of installing things, you 
     - `. venv/bin/activate`
  6. Install all required python modules
     - `pip install -r requirements.txt`
- 7. Start the Flask server
+ 7. Populate your database
+    - `python scraper.py --force-update`
+ 8. Start the Flask server
     - `python tutorifull.py`
- 8. Go to `127.0.0.1:5000` in your browser
+ 9. Go to `127.0.0.1:5000` in your browser
 
 
 ## TODO
