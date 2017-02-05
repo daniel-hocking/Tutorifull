@@ -9,7 +9,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from config import DATABASE
+from config import (
+    DATABASE,
+    REDIS_PORT,
+)
 
 engine = create_engine(DATABASE)
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -28,5 +31,5 @@ def init_db():
 def get_redis():
     redis = getattr(g, '_redis', None)
     if redis is None:
-        redis = g._redis = StrictRedis(host='localhost', port=6379, db=0)
+        redis = g._redis = StrictRedis(host='localhost', port=REDIS_PORT, db=0)
     return redis

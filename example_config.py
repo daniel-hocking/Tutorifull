@@ -2,6 +2,7 @@
 # copy this into a file called 'config.py' and change values to ones specific to you
 
 DATABASE = 'postgresql://tutorifull:tutorifull@localhost:5432/tutorifull'  # how to connect to the database
+REDIS_PORT = 6379
 DEBUG = False  # never set this to True in production
 SECRET_KEY = 'example secret key'  # flask secret key
 BASE_DOMAIN_NAME = 'example.com'  # base domain name hosting the site
