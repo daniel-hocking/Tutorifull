@@ -1,0 +1,17 @@
+Flask==0.10.1
+Flask-AssetRev==1.0.0
+Jinja2==2.8
+MarkupSafe==0.23
+SQLAlchemy==1.0.9
+WTForms==2.0.2
+Werkzeug==0.11.2
+argparse==1.2.1
+beautifulsoup4==4.4.1
+blinker==1.4
+contextlib2==0.5.4
+itsdangerous==0.24
+psycopg2==2.6.1
+raven==5.32.0
+redis==2.10.5
+requests==2.9.1
+wsgiref==0.1.2
