@@ -14,7 +14,7 @@ from flask import (
     request,
     send_from_directory,
 )
-from flask.ext import assetrev
+import flask_assetrev
 from sqlalchemy.sql.expression import or_
 
 from config import SENTRY_DSN
@@ -39,7 +39,7 @@ from util import (
 
 app = Flask(__name__)
 app.config.from_object('config')
-assetrev.AssetRev(app)
+flask_assetrev.AssetRev(app)
 
 from raven.contrib.flask import Sentry
 sentry = Sentry(app, dsn=SENTRY_DSN)
