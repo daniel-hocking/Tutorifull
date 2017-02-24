@@ -2,7 +2,6 @@
   "name": "tutorifull",
   "version": "1.0.0",
   "description": "Get an alert when a UNSW class has a free spot",
-  "dependencies": {},
   "devDependencies": {
     "del": "^2.2.1",
     "gulp": "^3.9.1",

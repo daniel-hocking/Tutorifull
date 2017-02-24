@@ -49,7 +49,7 @@ new autoComplete({
     delay: 300,
     source: function(term, suggest){
         httpGetAsync('/api/courses?q=' + term, function(data){
-            suggest(JSON.parse(data));
+            suggest(term, JSON.parse(data));
         });
     },
     renderItem: function (item, search){

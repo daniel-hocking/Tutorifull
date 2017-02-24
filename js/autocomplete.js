@@ -48,8 +48,7 @@ var autoComplete = (function(){
             that.cache = {};
             that.last_val = '';
 
-            var suggest = function(data){
-                var val = that.value;
+            var suggest = function(val, data){
                 that.cache[val] = data;
                 o.clearItems();
                 if (data.length && val.length >= o.minChars) {
@@ -78,11 +77,11 @@ var autoComplete = (function(){
                             that.last_val = val;
                             clearTimeout(that.timer);
                             if (o.cache) {
-                                if (val in that.cache) { suggest(that.cache[val]); return; }
+                                if (val in that.cache) { suggest(val, that.cache[val]); return; }
                                 // no requests if previous suggestions were empty
                                 for (var i=1; i<val.length-o.minChars; i++) {
                                     var part = val.slice(0, val.length-i);
-                                    if (part in that.cache && !that.cache[part].length) { suggest([]); return; }
+                                    if (part in that.cache && !that.cache[part].length) { suggest(val, []); return; }
                                 }
                             }
                             that.timer = setTimeout(function(){ o.source(val, suggest) }, o.delay);
