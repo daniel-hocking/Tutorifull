@@ -17,7 +17,10 @@ from flask import (
 import flask_assetrev
 from sqlalchemy.sql.expression import or_
 
-from config import SENTRY_DSN
+from config import (
+    SENTRY_DSN,
+    DISABLED,
+)
 from constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
@@ -63,6 +66,8 @@ def homepage():
         response.cache_control.no_store = True
         return response
 
+    if DISABLED:
+        return render_template('homepage_disabled.html')
     return render_template('homepage.html')
 
 
