@@ -70,7 +70,8 @@ def klass_to_text_email_line(klass):
     line += '%s | ' % klass['type']
     line += '%s | ' % (', '.join('%s %s-%s' % (timeslot['day'], timeslot['start_time'], timeslot['end_time'])
                                  for timeslot in klass['timeslots']))
-    line += '%s | ' % ', '.join(timeslot['location'] for timeslot in klass['timeslots'])
+    line += '%s | ' % ', '.join(timeslot['location']
+                                for timeslot in klass['timeslots'])
     line += '%s | ' % klass['status']
     line += '%d/%d\n' % (klass['enrolled'], klass['capacity'])
     return line
@@ -101,7 +102,6 @@ Made By a Dome
     assert r.status_code == 200
 
 
-
 def alert_by_sms(phone_number, alerts):
     # send alerts in batches of 10 classes to avoid going over the 160 char limit
     for alerts_chunk in chunks(alerts, 10):
@@ -123,7 +123,8 @@ def get_telstra_api_access_token():
                       }).json()
 
     # cache the access token in redis, making it expire slightly earlier than it does on the Telstra server
-    get_redis().setex('telstra_api_access_token', int(r['expires_in']) - 60, r['access_token'])
+    get_redis().setex('telstra_api_access_token', int(
+        r['expires_in']) - 60, r['access_token'])
     return r['access_token']
 
 
