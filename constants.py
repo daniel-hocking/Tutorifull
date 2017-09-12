@@ -1,7 +1,4 @@
-from __future__ import (
-    absolute_import,
-    print_function,
-)
+from __future__ import absolute_import, print_function
 
 POSTGRES_MAX_INT = 2147483647
 
@@ -18,7 +15,7 @@ SUMMER_SEM = 0
 SEMESTER_1 = 1
 SEMESTER_2 = 2
 
-CURRENT_SEM = SEMESTER_1
+CURRENT_SEM = SEMESTER_2
 
 # contact types
 CONTACT_TYPE_EMAIL = 0

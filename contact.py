@@ -1,38 +1,25 @@
-from __future__ import (
-    absolute_import,
-    print_function,
-)
+from __future__ import absolute_import, print_function
 
+import json
 from collections import defaultdict
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from flask import render_template
-import json
-import requests
-from subprocess import (
-    Popen,
-    PIPE,
-)
+from subprocess import PIPE, Popen
 
+import requests
 from config import (
     BASE_DOMAIN_NAME,
     FULL_DOMAIN_NAME,
-    MAILGUN_DOMAIN_NAME,
     MAILGUN_API_KEY,
+    MAILGUN_DOMAIN_NAME,
     TELSTRA_CONSUMER_KEY,
     TELSTRA_CONSUMER_SECRET,
     YO_API_KEY,
 )
-from constants import (
-    CONTACT_TYPE_EMAIL,
-    CONTACT_TYPE_SMS,
-    CONTACT_TYPE_YO,
-)
+from constants import CONTACT_TYPE_EMAIL, CONTACT_TYPE_SMS, CONTACT_TYPE_YO
 from dbhelper import get_redis
-from util import (
-    chunks,
-    klasses_to_template_courses,
-)
+from flask import render_template
+from util import chunks, klasses_to_template_courses
 
 
 def send_alerts(alerts):
@@ -55,20 +42,23 @@ def send_alerts(alerts):
             elif contact_type == CONTACT_TYPE_YO:
                 alert_by_yo(contact, alerts)
             successful_alerts += alerts
-        except:
+        except Exception:
             sentry.captureException()
 
     return successful_alerts
 
 
 def create_alert_link(klass_ids):
-    return 'https://' + FULL_DOMAIN_NAME + '/alert?classids=' + ','.join(map(str, klass_ids))
+    return ('https://' + FULL_DOMAIN_NAME + '/alert?classids=' +
+            ','.join(map(str, klass_ids)))
 
 
 def klass_to_text_email_line(klass):
     line = ' - '
     line += '%s | ' % klass['type']
-    line += '%s | ' % (', '.join('%s %s-%s' % (timeslot['day'], timeslot['start_time'], timeslot['end_time'])
+    line += '%s | ' % (', '.join('%s %s-%s' % (timeslot['day'],
+                                               timeslot['start_time'],
+                                               timeslot['end_time'])
                                  for timeslot in klass['timeslots']))
     line += '%s | ' % ', '.join(timeslot['location']
                                 for timeslot in klass['timeslots'])
@@ -87,13 +77,17 @@ These classes now have a space for you to enrol.
 
 
 Made By a Dome
-''' % ''.join(course['course_id'] + '\n' + ''.join(klass_to_text_email_line(klass) for klass in course['classes'])
+''' % ''.join(course['course_id'] + '\n' +
+              ''.join(klass_to_text_email_line(klass)
+                      for klass in course['classes'])
               for course in courses)
     html = render_template('email.html', courses=courses)
 
-    r = requests.post('https://api.mailgun.net/v3/' + MAILGUN_DOMAIN_NAME + '/messages',
+    r = requests.post('https://api.mailgun.net/v3/' + MAILGUN_DOMAIN_NAME +
+                      '/messages',
                       auth=('api', MAILGUN_API_KEY),
-                      data={'from': 'Tutorifull <tutorifull@' + BASE_DOMAIN_NAME + '>',
+                      data={'from': 'Tutorifull <tutorifull@'
+                            + BASE_DOMAIN_NAME + '>',
                             'to': email,
                             'subject': 'A spot has opened up in a class!',
                             'text': text,
@@ -103,10 +97,12 @@ Made By a Dome
 
 
 def alert_by_sms(phone_number, alerts):
-    # send alerts in batches of 10 classes to avoid going over the 160 char limit
+    # send alerts in batches of 10 classes to avoid going over the 160 char
+    # limit
     for alerts_chunk in chunks(alerts, 10):
         send_sms(phone_number,
-                 "A spot has opened up in a class: %s" % create_alert_link(a.klass.klass_id for a in alerts_chunk))
+                 "A spot has opened up in a class: %s" % create_alert_link(
+                     a.klass.klass_id for a in alerts_chunk))
 
 
 def get_telstra_api_access_token():
@@ -122,7 +118,8 @@ def get_telstra_api_access_token():
                           'grant_type': 'client_credentials'
                       }).json()
 
-    # cache the access token in redis, making it expire slightly earlier than it does on the Telstra server
+    # cache the access token in redis, making it expire slightly earlier than it
+    # does on the Telstra server
     get_redis().setex('telstra_api_access_token', int(
         r['expires_in']) - 60, r['access_token'])
     return r['access_token']
@@ -136,7 +133,9 @@ def send_sms(phone_number, message):
                           'to': phone_number,
                           'body': message
                       }))
-    assert r.status_code == 202, 'While sending an sms, Telstra api returned status code %d' % r.status_code
+    assert (r.status_code == 202,
+            'While sending an sms, Telstra api returned status code %d' %
+            r.status_code)
 
 
 def alert_by_yo(username, alerts):
@@ -152,12 +151,15 @@ def send_yo(username, link=None, text=None):
                             'link': link,
                             'text': text})
 
-    # either we succeed to send the yo, or the username doesn't exist - either way we want the alerts to be deleted
-    assert (r.status_code == 200 or
-            r.status_code == 404), 'While sending a yo, yo api returned status code %d' % r.status_code
+    # either we succeed to send the yo, or the username doesn't exist - either
+    # way we want the alerts to be deleted
+    assert (r.status_code == 200 or r.status_code == 404,
+            'While sending a yo, yo api returned status code %d' %
+            r.status_code)
 
 
 def is_valid_yo_name(yo_name):
     r = requests.get('https://api.justyo.co/check_username/',
-                     params={'api_token': YO_API_KEY, 'username': yo_name}).json()
+                     params={'api_token': YO_API_KEY,
+                             'username': yo_name}).json()
     return r['exists']

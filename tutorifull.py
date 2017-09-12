@@ -1,26 +1,11 @@
-from __future__ import (
-    absolute_import,
-    print_function,
-)
+from __future__ import absolute_import, print_function
 
 import json
-import re
 import os
+import re
 
-from flask import (
-    Flask,
-    g,
-    render_template,
-    request,
-    send_from_directory,
-)
 import flask_assetrev
-from sqlalchemy.sql.expression import or_
-
-from config import (
-    SENTRY_DSN,
-    DISABLED,
-)
+from config import DISABLED, SENTRY_DSN
 from constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
@@ -29,11 +14,10 @@ from constants import (
 )
 from contact import is_valid_yo_name
 from dbhelper import db_session
-from models import (
-    Alert,
-    Course,
-    Klass,
-)
+from flask import Flask, g, render_template, request, send_from_directory
+from models import Alert, Course, Klass
+from raven.contrib.flask import Sentry
+from sqlalchemy.sql.expression import or_
 from util import (
     contact_type_description,
     klasses_to_template_courses,
@@ -44,8 +28,8 @@ app = Flask(__name__)
 app.config.from_object('config')
 flask_assetrev.AssetRev(app)
 
-from raven.contrib.flask import Sentry
 sentry = Sentry(app, dsn=SENTRY_DSN)
+
 
 def after_this_request(f):
     if not hasattr(g, 'after_request_callbacks'):
@@ -74,7 +58,8 @@ def homepage():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/favicon'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/alert', methods=['GET'])
@@ -85,9 +70,11 @@ def show_alert():
     if klass_ids:
         klass_ids = klass_ids.split(',')
         # filter out all non-numeric ids
-        klass_ids = [klass_id for klass_id in klass_ids if re.match(r'^\d+$', klass_id)]
+        klass_ids = [klass_id for klass_id in klass_ids if re.match(
+            r'^\d+$', klass_id)]
         # get course info from db
-        klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
+        klasses = db_session.query(Klass).filter(
+            Klass.klass_id.in_(klass_ids)).all()
         courses = klasses_to_template_courses(klasses)
 
     @after_this_request
@@ -101,10 +88,17 @@ def show_alert():
 @app.route('/api/alerts', methods=['POST'])
 def save_alerts():
     # get info from the form
-    # if something is invalid or they haven't given a contact or chosen classes just show an error page because they've
-    # gotten past the javascript error handling somehow and repopulating the chosen classes list would be super annoying
+    # if something is invalid or they haven't given a contact or chosen classes
+    # just show an error page because they've gotten past the javascript error
+    # handling somehow and repopulating the chosen classes list would be super
+    # annoying
     # I guess it's still TODO worthy (I'll probably never do it though)
     post_data = request.get_json()
+
+    if not post_data:
+        return render_template('error.html',
+                               error='Something went wrong')
+
     if post_data.get('email'):
         contact = post_data['email']
         contact_type = CONTACT_TYPE_EMAIL
@@ -116,26 +110,32 @@ def save_alerts():
         contact_type = CONTACT_TYPE_SMS
         if not re.match(r'^(04|\+?614)\d{8}$', contact):
             return render_template('error.html',
-                                   error='Please enter a valid Australian phone number')
+                                   error='Please enter a valid Australian ' +
+                                         'phone number')
     elif post_data.get('yoname'):
         contact = post_data['yoname'].upper()
         contact_type = CONTACT_TYPE_YO
-        if not re.match(r'^(\d|\w)+$', contact) or not is_valid_yo_name(contact):
+        if (not re.match(r'^(\d|\w)+$', contact) or
+                not is_valid_yo_name(contact)):
             return render_template('error.html',
                                    error='Please enter a valid YO username')
     else:
         return render_template('error.html',
-                               error='Please enter some contact info before submitting.')
+                               error='Please enter some contact info before ' +
+                                     'submitting.')
 
     # get course info from db
     klass_ids = post_data.get('classids', [])
-    klasses = db_session.query(Klass).filter(Klass.klass_id.in_(klass_ids)).all()
+    klasses = db_session.query(Klass).filter(
+        Klass.klass_id.in_(klass_ids)).all()
     if not klasses:
         return render_template('error.html',
-                               error='Please select at least one class before submitting.')
+                               error='Please select at least one class ' +
+                                     'before submitting.')
 
     for klass in klasses:
-        alert = Alert(klass_id=klass.klass_id, contact_type=contact_type, contact=contact)
+        alert = Alert(klass_id=klass.klass_id,
+                      contact_type=contact_type, contact=contact)
         db_session.add(alert)
     db_session.commit()
     courses = klasses_to_template_courses(klasses)
@@ -164,7 +164,8 @@ def search_courses():
 def course_info(course_id):
     course_id = course_id.upper()
     dept_id, course_id = validate_course_id(course_id)
-    course = db_session.query(Course).filter_by(dept_id=dept_id, course_id=course_id).one()
+    course = db_session.query(Course).filter_by(
+        dept_id=dept_id, course_id=course_id).one()
     return json.dumps(course.to_dict(with_classes=True))
 
 
