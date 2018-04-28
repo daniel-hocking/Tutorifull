@@ -52,14 +52,14 @@ new autoComplete({
             suggest(term, JSON.parse(data));
         });
     },
-    renderItem: function (item, search){
+    renderItem: function(item, search) {
         var resultItem = createElement('li', 'course-search-result');
         resultItem.textContent = item.course_id + ' - ' + item.course_name;
         resultItem.dataset.courseId = item.course_id;
         courseSearchResults.appendChild(resultItem);
         return resultItem;
     },
-    clearItems: function(){
+    clearItems: function() {
         courseSearchResults.innerHTML = '';
     },
     onSelect: function() {
@@ -67,7 +67,7 @@ new autoComplete({
         courseSearchResults.innerHTML = '';
         searchBox.value = this.textContent;
     },
-    onControlKey: function(searchBox, key){
+    onControlKey: function(searchBox, key) {
         if (key == 40 || key == 38) {
             //down, up keys
             var sel = courseSearchResults.querySelector('.course-search-result.selected');
@@ -83,7 +83,8 @@ new autoComplete({
                     searchBox.value = next.textContent;
                 } else {
                     sel.classList.toggle('selected');
-                    searchBox.value = searchBox.last_val; next = 0;
+                    searchBox.value = searchBox.last_val;
+                    next = 0;
                 }
             }
         } else if (key == 9 || key == 13) {
@@ -98,6 +99,7 @@ new autoComplete({
 
 // onclick handler for searchbar
 searchBox.onclick = onSearchBoxClick;
+
 function onSearchBoxClick() {
     // when you click on the search box, all the text gets selected
     this.setSelectionRange(0, this.value.length);
@@ -130,7 +132,7 @@ function classSearchResultsCallback(course) {
         classTableRow.appendChild(classType);
 
         var classTime = createElement('td', 'class-time');
-        for (var i=0; i<klass.timeslots.length; i++) {
+        for (var i = 0; i < klass.timeslots.length; i++) {
             var classTimeP = createElement('p');
             classTimeP.textContent = klass.timeslots[i].day + ' ' + klass.timeslots[i].start_time + '-' + klass.timeslots[i].end_time;
             classTime.appendChild(classTimeP);
@@ -138,7 +140,7 @@ function classSearchResultsCallback(course) {
         classTableRow.appendChild(classTime);
 
         var classLocation = createElement('td', 'class-location');
-        for (var i=0; i<klass.timeslots.length; i++) {
+        for (var i = 0; i < klass.timeslots.length; i++) {
             var classLocationP = createElement('p');
             classLocationP.textContent = klass.timeslots[i].location;
             classLocation.appendChild(classLocationP);
@@ -208,7 +210,7 @@ function onSearchedClassClick() {
             confirmClasses.appendChild(selectedCourseTable);
         }
 
-        var selectedClassRow = this.cloneNode(deep=true);
+        var selectedClassRow = this.cloneNode(deep = true);
         selectedClassRow.onclick = onSelectedClassClick;
         selectedCourseTable.appendChild(selectedClassRow);
         selectedClassRows.set(this.dataset.classId, selectedClassRow);
@@ -232,31 +234,31 @@ var contactVerificationDelay = 1500;
 
 // oninput handlers for contact inputs
 Array.prototype.forEach.call(contactInputs,
-                             function(contactInput) {
-                                 contactInput.oninput = function() {
-                                     clearTimeout(contactInput.timer);
-                                     clearOtherContactInputs(contactInput);
-                                     contactInput.parentElement.classList.remove('valid', 'invalid');
-                                     contactInput.parentElement.classList.add('verifying');
-                                     var val = contactInput.value;
-                                     var validationFunction;
-                                     if (val.length >= 1) {
-                                         switch(contactInput.name) {
-                                            case 'email':
-                                                validationFunction = validateEmail;
-                                                break;
-                                            case 'phonenumber':
-                                                validationFunction = validatePhoneNumber;
-                                                break;
-                                            case 'yoname':
-                                                validationFunction = validateYoName;
-                                         }
-                                         contactInput.timer = setTimeout(validationFunction, contactVerificationDelay);
-                                     } else {
-                                         contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
-                                     }
-                                 };
-                             }
+    function(contactInput) {
+        contactInput.oninput = function() {
+            clearTimeout(contactInput.timer);
+            clearOtherContactInputs(contactInput);
+            contactInput.parentElement.classList.remove('valid', 'invalid');
+            contactInput.parentElement.classList.add('verifying');
+            var val = contactInput.value;
+            var validationFunction;
+            if (val.length >= 1) {
+                switch (contactInput.name) {
+                    case 'email':
+                        validationFunction = validateEmail;
+                        break;
+                    case 'phonenumber':
+                        validationFunction = validatePhoneNumber;
+                        break;
+                    case 'yoname':
+                        validationFunction = validateYoName;
+                }
+                contactInput.timer = setTimeout(validationFunction, contactVerificationDelay);
+            } else {
+                contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
+            }
+        };
+    }
 );
 
 function validateEmail() {
@@ -311,13 +313,13 @@ function validateYoName() {
 
 function clearOtherContactInputs(chosenInput) {
     Array.prototype.forEach.call(contactInputs,
-                                 function(contactInput) {
-                                     if (contactInput != chosenInput) {
-                                         clearTimeout(contactInput.timer);
-                                         contactInput.value = '';
-                                         contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
-                                     }
-                                 }
+        function(contactInput) {
+            if (contactInput != chosenInput) {
+                clearTimeout(contactInput.timer);
+                contactInput.value = '';
+                contactInput.parentElement.classList.remove('valid', 'invalid', 'verifying');
+            }
+        }
     );
 }
 
@@ -329,7 +331,7 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     var error = false;
 
     //find the valid contact
-    for(var i=0; i < contactInputs.length; i++) {
+    for (var i = 0; i < contactInputs.length; i++) {
         var contactInput = contactInputs[i];
         if (contactInput.parentElement.classList.contains('valid')) {
             postData[contactInput.name] = contactInput.value;
@@ -365,7 +367,7 @@ document.getElementsByClassName('alert-me-button')[0].onclick = function() {
     // send the collected data as JSON
     xhr.send(JSON.stringify(postData));
 
-    xhr.onloadend = function (response) {
+    xhr.onloadend = function(response) {
         document.write(response.target.response);
         window.scrollTo(0, 0);
     };

@@ -1,0 +1,9 @@
+app	/home/chybby/development/tutorifull/tutorifull.py	/^app = Flask(__name__)$/;"	variable	line:37
+shutdown_session	/home/chybby/development/tutorifull/tutorifull.py	/^def shutdown_session(exception=None):$/;"	function	line:42
+homepage	/home/chybby/development/tutorifull/tutorifull.py	/^def homepage():$/;"	function	line:47
+favicon	/home/chybby/development/tutorifull/tutorifull.py	/^def favicon():$/;"	function	line:52
+show_alert	/home/chybby/development/tutorifull/tutorifull.py	/^def show_alert():$/;"	function	line:58
+save_alerts	/home/chybby/development/tutorifull/tutorifull.py	/^def save_alerts():$/;"	function	line:74
+search_courses	/home/chybby/development/tutorifull/tutorifull.py	/^def search_courses():$/;"	function	line:123
+course_info	/home/chybby/development/tutorifull/tutorifull.py	/^def course_info(course_id):$/;"	function	line:136
+validate_yo_name	/home/chybby/development/tutorifull/tutorifull.py	/^def validate_yo_name():$/;"	function	line:144

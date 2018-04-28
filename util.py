@@ -1,12 +1,7 @@
-from __future__ import (
-    absolute_import,
-    print_function,
-)
+from __future__ import absolute_import, print_function
 
 import re
 from collections import defaultdict
-
-from sqlalchemy.sql import exists
 
 from constants import (
     CONTACT_TYPE_EMAIL,
@@ -21,6 +16,7 @@ from constants import (
 )
 from dbhelper import db_session
 from models import Klass
+from sqlalchemy.sql import exists
 
 web_status_to_db_status_dict = {'open': STATUS_OPEN,
                                 'full': STATUS_FULL,
@@ -32,6 +28,7 @@ web_status_to_db_status_dict = {'open': STATUS_OPEN,
 
 def web_status_to_db_status(status):
     return web_status_to_db_status_dict[status[:4].lower()]
+
 
 db_status_to_text_status_dict = {STATUS_OPEN: 'Open',
                                  STATUS_FULL: 'Full',
@@ -56,6 +53,7 @@ web_day_to_int_day_dict = {'mon': 0,
 
 def web_day_to_int_day(day):
     return web_day_to_int_day_dict[day.lower()]
+
 
 int_day_to_text_day_dict = {0: 'Mon',
                             1: 'Tue',
@@ -94,13 +92,15 @@ def seconds_since_midnight_to_hour_of_day(seconds):
 
 
 def contact_type_description(contact_type):
-    pretty_contact_type = {CONTACT_TYPE_EMAIL: 'an email', CONTACT_TYPE_SMS: 'an SMS', CONTACT_TYPE_YO: 'a YO'}
+    pretty_contact_type = {CONTACT_TYPE_EMAIL: 'an email',
+                           CONTACT_TYPE_SMS: 'an SMS', CONTACT_TYPE_YO: 'a YO'}
     return pretty_contact_type[contact_type]
 
 
 def validate_klass_id(klass_id):
     klass_id = int(klass_id)
-    if not db_session.query(exists().where(Klass.klass_id == klass_id)).scalar():
+    if not db_session.query(exists().where(Klass.klass_id ==
+                                           klass_id)).scalar():
         raise KeyError
     return klass_id
 
@@ -117,12 +117,13 @@ def klasses_to_template_courses(klasses):
     for klass in klasses:
         courses_dict[klass.course.compound_id].append(klass)
 
+    def sort_key(c):
+        return (c.klass_type,
+                c.timeslots[0].day if c.timeslots else None,
+                c.timeslots[0].start_time if c.timeslots else None)
+
     courses = [{'course_id': course_id,
-                'classes': [c.to_dict()
-                            for c in sorted(classes,
-                                            key=lambda c: (c.klass_type,
-                                                           c.timeslots[0].day if c.timeslots else None,
-                                                           c.timeslots[0].start_time if c.timeslots else None))]}
+                'classes': [c.to_dict() for c in sorted(classes, key=sort_key)]}
                for course_id, classes in sorted(courses_dict.iteritems())]
     return courses
 

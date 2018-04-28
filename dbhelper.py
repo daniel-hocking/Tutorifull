@@ -1,18 +1,11 @@
-from __future__ import (
-    absolute_import,
-    print_function,
-)
+from __future__ import absolute_import, print_function
 
+from config import DATABASE, REDIS_PORT
 from flask import g
 from redis import StrictRedis
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
-
-from config import (
-    DATABASE,
-    REDIS_PORT,
-)
 
 engine = create_engine(DATABASE)
 db_session = scoped_session(sessionmaker(autocommit=False,
