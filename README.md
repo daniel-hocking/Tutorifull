@@ -61,3 +61,5 @@ Note: These instructions might be incomplete in terms of installing things, you 
 
  - [ ] Find a way to distinguish UG and PG classes
  - [ ] Fix the back button to go back to the homepage after submitting
+ - [ ] Automatically disable signing up for alerts and alerting once the enrollment period is over (or maybe just show a warning)
+ - [ ] Automatically switch semesters
