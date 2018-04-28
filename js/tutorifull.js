@@ -48,7 +48,7 @@ new autoComplete({
     minChars: 2,
     delay: 300,
     source: function(term, suggest){
-        httpGetAsync('/api/courses?q=' + term, function(data){
+        httpGetAsync('/api/courses?q=' + encodeURIComponent(term), function(data){
             suggest(term, JSON.parse(data));
         });
     },
