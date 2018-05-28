@@ -110,11 +110,10 @@ def get_telstra_api_access_token():
     if access_token is not None:
         return access_token
 
-    r = requests.post('https://api.telstra.com/v1/oauth/token',
+    r = requests.post('https://tapi.telstra.com/v2/oauth/token',
                       data={
                           'client_id': TELSTRA_CONSUMER_KEY,
                           'client_secret': TELSTRA_CONSUMER_SECRET,
-                          'scope': 'SMS',
                           'grant_type': 'client_credentials'
                       }).json()
 
@@ -127,15 +126,16 @@ def get_telstra_api_access_token():
 
 def send_sms(phone_number, message):
     access_token = get_telstra_api_access_token()
-    r = requests.post('https://api.telstra.com/v1/sms/messages',
-                      headers={'Authorization': 'Bearer %s' % access_token},
+    r = requests.post('https://tapi.telstra.com/v2/messages/sms',
+                      headers={'Authorization': 'Bearer %s' % access_token,
+                               'Content-Type': 'application/json'},
                       data=json.dumps({
                           'to': phone_number,
                           'body': message
                       }))
-    assert (r.status_code == 202,
-            'While sending an sms, Telstra api returned status code %d' %
-            r.status_code)
+    assert r.status_code == 201, (
+        'While sending an sms, Telstra api returned status code %d' %
+        r.status_code)
 
 
 def alert_by_yo(username, alerts):
@@ -153,9 +153,9 @@ def send_yo(username, link=None, text=None):
 
     # either we succeed to send the yo, or the username doesn't exist - either
     # way we want the alerts to be deleted
-    assert (r.status_code == 200 or r.status_code == 404,
-            'While sending a yo, yo api returned status code %d' %
-            r.status_code)
+    assert r.status_code == 200 or r.status_code == 404, (
+        'While sending a yo, yo api returned status code %d' %
+        r.status_code)
 
 
 def is_valid_yo_name(yo_name):
