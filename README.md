@@ -55,11 +55,3 @@ Note: These instructions might be incomplete in terms of installing things, you 
  9. Start the Flask server
     - `python tutorifull.py`
  10. Go to `127.0.0.1:5000` in your browser
-
-
-## TODO
-
- - [ ] Find a way to distinguish UG and PG classes
- - [ ] Fix the back button to go back to the homepage after submitting
- - [ ] Automatically disable signing up for alerts and alerting once the enrollment period is over (or maybe just show a warning)
- - [ ] Automatically switch semesters
