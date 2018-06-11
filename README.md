@@ -12,7 +12,7 @@ Tutorifull is split into three parts: the website, the scraper and the database.
 
 The website frontend is written in HTML Jinja templates, Sass and vanilla JS.
 
-The website backend is written in Python using Flask. The flask application is created in [tutorifull.py](https://github.com/Chybby/Tutorifull/blob/master/tutorifull.py).
+The website backend is written in Python using Flask. The flask application is created in [tutorifull.py](https://gitlab.com/chybby/Tutorifull/blob/master/tutorifull.py).
 
 ### The Scraper
 
@@ -30,7 +30,7 @@ People can be alerted in three different ways:
 
 Both the website and the scraper need a place to store/retrieve information right?
 
-The database is managed using SQLAlchemy. The models live in [models.py](https://github.com/Chybby/Tutorifull/blob/master/models.py).
+The database is managed using SQLAlchemy. The models live in [models.py](https://gitlab.com/Chybby/Tutorifull/blob/master/models.py).
 
 ## Running your own version
 
