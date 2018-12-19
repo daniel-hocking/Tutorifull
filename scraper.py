@@ -4,12 +4,13 @@ import argparse
 import re
 import sys
 import time
+import traceback
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 from config import SENTRY_DSN
-from constants import CURRENT_SEM, POSTGRES_MAX_INT
+from constants import CURRENT_TERM, POSTGRES_MAX_INT
 from contact import send_alerts
 from dbhelper import db_session, get_redis
 from models import Alert, Course, Dept, Klass, Timeslot
@@ -34,6 +35,10 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                          .filter_by(course_id=course_id, dept_id=dept_id)
                          .all()}
 
+    # Crappy hack because some course decided to list two classes with the
+    # same id...
+    klasses_added = set()
+
     for row in klasses:
         klass_type, _, klass_id, _, status, enrollment, _, time_and_place = (
             d.get_text() for d in row)
@@ -42,6 +47,9 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
         m = re.search(r'(\d+)/(\d+).*', enrollment)
         enrolled = int(m.group(1))
         capacity = int(m.group(2))
+
+        if klass_id in klasses_added:
+            continue
 
         # if this is a new class or the timeslot raw text has changed since we
         # last saw it
@@ -109,6 +117,7 @@ def scrape_course_and_classes(course_id, dept_id, name, klasses):
                                                 POSTGRES_MAX_INT))
         db_session.merge(klass)
         klasses_to_delete.pop(klass_id, None)
+        klasses_added.add(klass_id)
 
     for klass in klasses_to_delete.values():
         db_session.delete(klass)
@@ -128,7 +137,10 @@ def scrape_dept(dept_id, name, page):
     dept_page = BeautifulSoup(r.text, 'html.parser')
     klasses = []
     course_id = ''
-    for row in dept_page.find_all('table')[2].find_all('tr'):
+    tables = dept_page.find_all('table')
+    if len(tables) < 3:
+      return
+    for row in tables[2].find_all('tr'):
         data = row.find_all('td')
         if data[0].get('class', [''])[0] == 'cucourse':
             # row is the code and name of a course
@@ -182,7 +194,7 @@ def wait_until_updated():
 
 def update_classes(force_update=False):
     if not force_update and not wait_until_updated():
-        sys.exit(1)
+        return
 
     depts_to_delete = {
         dept.dept_id: dept for dept in db_session.query(Dept).all()}
@@ -198,11 +210,11 @@ def update_classes(force_update=False):
             pass
         elif data[0]['class'][0] == 'data':
             # row describes a department
-            links = data[:3]
-            dept_info = data[3:]
+            links = data[:4]
+            dept_info = data[4:]
             links = [d.a['href'] if d.a is not None else None for d in links]
             dept_id, name = (d.get_text() for d in dept_info)
-            link = links[CURRENT_SEM]
+            link = links[CURRENT_TERM]
             # check if the department runs in the current semester
             if link is not None:
                 depts_to_delete.pop(dept_id, None)
@@ -250,5 +262,6 @@ if __name__ == '__main__':
                 update_classes(args.force_update)
             if not args.no_alert:
                 check_alerts()
-        except Exception:
+        except Exception as e:
             sentry.captureException()
+            traceback.print_exc()
