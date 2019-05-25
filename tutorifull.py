@@ -16,7 +16,9 @@ from contact import is_valid_yo_name
 from dbhelper import db_session
 from flask import Flask, g, render_template, request, send_from_directory
 from models import Alert, Course, Klass
-from raven.contrib.flask import Sentry
+#from raven.contrib.flask import Sentry
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy.sql.expression import or_
 from util import (
     contact_type_description,
@@ -28,7 +30,10 @@ app = Flask(__name__)
 app.config.from_object('config')
 flask_assetrev.AssetRev(app)
 
-sentry = Sentry(app, dsn=SENTRY_DSN)
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=[FlaskIntegration()]
+)
 
 
 def after_this_request(f):

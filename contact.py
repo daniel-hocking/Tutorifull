@@ -23,7 +23,7 @@ from util import chunks, klasses_to_template_courses
 
 
 def send_alerts(alerts):
-    from tutorifull import sentry
+    from sentry_sdk import capture_exception
 
     # organizes the alerts by contact info then sends one alert per contact info
     alerts_by_contact = defaultdict(list)
@@ -43,7 +43,7 @@ def send_alerts(alerts):
                 alert_by_yo(contact, alerts)
             successful_alerts += alerts
         except Exception:
-            sentry.captureException()
+            capture_exception()
 
     return successful_alerts
 

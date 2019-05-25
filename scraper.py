@@ -14,7 +14,8 @@ from constants import CURRENT_TERM, POSTGRES_MAX_INT
 from contact import send_alerts
 from dbhelper import db_session, get_redis
 from models import Alert, Course, Dept, Klass, Timeslot
-from tutorifull import app, sentry
+from tutorifull import app
+from sentry_sdk import capture_exception, capture_message
 from util import (
     hour_of_day_to_seconds_since_midnight,
     web_day_to_int_day,
@@ -236,7 +237,7 @@ def check_alerts():
     for alert in successful_alerts:
         db_session.delete(alert)
 
-    sentry.captureMessage(('Tried to send %d alerts, %d succeeded' %
+    capture_message(('Tried to send %d alerts, %d succeeded' %
                            (len(triggered_alerts), len(successful_alerts))),
                           level='info')
 
@@ -255,7 +256,7 @@ if __name__ == '__main__':
                                  "it hasn't updated")
         args = parser.parse_args()
 
-        sentry.captureMessage('Starting scraper', level='info')
+        capture_message('Starting scraper', level='info')
 
         try:
             if not args.no_update:
@@ -263,5 +264,5 @@ if __name__ == '__main__':
             if not args.no_alert:
                 check_alerts()
         except Exception as e:
-            sentry.captureException()
+            capture_exception()
             traceback.print_exc()
