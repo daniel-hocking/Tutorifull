@@ -61,3 +61,6 @@ Note: These instructions might be incomplete in terms of installing things, you 
  
  ## If `pip install -r requirements.txt` fails
  This may be due to a more recent version of pip that is unsupported by some of these modules, downgrading to pip v9 is the easiest solution: https://stackoverflow.com/questions/25192794/no-module-named-pip-req
+ 
+ ## If Node is using a version older that v8.x
+ Refer to: https://askubuntu.com/questions/1074028/cant-install-the-latest-version-of-nodejs-despite-update-prior-to-the-attempt
