@@ -55,3 +55,9 @@ Note: These instructions might be incomplete in terms of installing things, you 
  9. Start the Flask server
     - `python tutorifull.py`
  10. Go to `127.0.0.1:5000` in your browser
+ 
+ ## If `npm install` command fails
+ Try updating packages as mentioned here: https://stackoverflow.com/questions/16073603/how-do-i-update-each-dependency-in-package-json-to-the-latest-version
+ 
+ ## If `pip install -r requirements.txt` fails
+ This may be due to a more recent version of pip that is unsupported by some of these modules, downgrading to pip v9 is the easiest solution: https://stackoverflow.com/questions/25192794/no-module-named-pip-req
