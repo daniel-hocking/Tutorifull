@@ -2,8 +2,9 @@ from __future__ import absolute_import, print_function
 
 import re
 from collections import defaultdict
+from sqlalchemy.sql import exists
 
-from constants import (
+from Tutorifull.constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
     CONTACT_TYPE_YO,
@@ -14,9 +15,8 @@ from constants import (
     STATUS_STOPPED,
     STATUS_TENTATIVE,
 )
-from dbhelper import db_session
-from models import Klass
-from sqlalchemy.sql import exists
+from Tutorifull.app import db_session
+from Tutorifull.models import Klass
 
 web_status_to_db_status_dict = {'open': STATUS_OPEN,
                                 'full': STATUS_FULL,

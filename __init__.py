@@ -5,36 +5,34 @@ import os
 import re
 
 import flask_assetrev
-from config import DISABLED, SENTRY_DSN
-from constants import (
+from flask import g, render_template, request, send_from_directory
+#from raven.contrib.flask import Sentry
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sqlalchemy.sql.expression import or_
+
+from Tutorifull.models import Alert, Course, Klass
+from Tutorifull.config import DISABLED, SENTRY_DSN
+from Tutorifull.constants import (
     CONTACT_TYPE_EMAIL,
     CONTACT_TYPE_SMS,
     CONTACT_TYPE_YO,
     MAX_SEARCH_RESULTS,
 )
-from contact import is_valid_yo_name
-from dbhelper import db_session
-from flask import Flask, g, render_template, request, send_from_directory
-from models import Alert, Course, Klass
-#from raven.contrib.flask import Sentry
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sqlalchemy.sql.expression import or_
-from util import (
+from Tutorifull.contact import is_valid_yo_name
+from Tutorifull.util import (
     contact_type_description,
     klasses_to_template_courses,
     validate_course_id,
 )
+from Tutorifull.app import app, db_session
 
-app = Flask(__name__)
-app.config.from_object('config')
 flask_assetrev.AssetRev(app)
 
 sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[FlaskIntegration()]
 )
-
 
 def after_this_request(f):
     if not hasattr(g, 'after_request_callbacks'):

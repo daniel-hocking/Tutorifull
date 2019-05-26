@@ -1,22 +1,19 @@
 from __future__ import absolute_import, print_function
 
-from constants import STATUS_OPEN
-from dbhelper import Base
-from sqlalchemy import Column, ForeignKey, ForeignKeyConstraint, Integer, String
-from sqlalchemy.orm import column_property, relationship
+from Tutorifull.constants import STATUS_OPEN
+from Tutorifull.app import db
 
-
-class Alert(Base):
+class Alert(db.Model):
     '''An alert that notifies the given contact information when the class has
     an empty space'''
     __tablename__ = 'alerts'
 
-    alert_id = Column(Integer, primary_key=True)
-    klass_id = Column(Integer, ForeignKey('klasses.klass_id'), nullable=False)
-    contact_type = Column(Integer, nullable=False)
-    contact = Column(String, nullable=False)
+    alert_id = db.Column(db.Integer, primary_key=True)
+    klass_id = db.Column(db.Integer, db.ForeignKey('klasses.klass_id'), nullable=False)
+    contact_type = db.Column(db.Integer, nullable=False)
+    contact = db.Column(db.String, nullable=False)
 
-    klass = relationship('Klass', back_populates='alerts')
+    klass = db.relationship('Klass', back_populates='alerts')
 
     def __repr__(self):
         return ("<Alert(alert_id='%d', klass_id='%d', contact_type='%s', " +
@@ -30,13 +27,13 @@ class Alert(Base):
         return False
 
 
-class Dept(Base):
+class Dept(db.Model):
     '''A department eg. COMP'''
     __tablename__ = 'depts'
-    dept_id = Column(String, primary_key=True)
-    name = Column(String, nullable=False)
+    dept_id = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String, nullable=False)
 
-    courses = relationship('Course', order_by='Course.course_id',
+    courses = db.relationship('Course', order_by='Course.course_id',
                            back_populates='dept',
                            cascade="all, delete, delete-orphan")
 
@@ -44,18 +41,18 @@ class Dept(Base):
         return "<Dept(dept_id='%s', name='%s')>" % (self.dept_id, self.name)
 
 
-class Course(Base):
+class Course(db.Model):
     '''A course eg. COMP2041'''
     __tablename__ = 'courses'
-    course_id = Column(String, primary_key=True)
-    dept_id = Column(String, ForeignKey('depts.dept_id'), primary_key=True)
-    name = Column(String, nullable=False)
+    course_id = db.Column(db.String, primary_key=True)
+    dept_id = db.Column(db.String, db.ForeignKey('depts.dept_id'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
 
-    dept = relationship('Dept', back_populates='courses')
-    klasses = relationship('Klass', back_populates='course',
+    dept = db.relationship('Dept', back_populates='courses')
+    klasses = db.relationship('Klass', back_populates='course',
                            cascade="all, delete, delete-orphan")
 
-    compound_id = column_property(dept_id + course_id)
+    compound_id = db.column_property(dept_id + course_id)
 
     def __repr__(self):
         return "<Course(dept_id='%s, 'course_id='%s', name='%s')>" % (
@@ -81,31 +78,31 @@ class Course(Base):
         return d
 
 
-class Klass(Base):
+class Klass(db.Model):
     '''A class you can choose when you are enrolling
     (a lab, a series of lectures, etc.)'''
     __tablename__ = 'klasses'
-    klass_id = Column(Integer, primary_key=True)
-    course_id = Column(String, nullable=False)
-    dept_id = Column(String, nullable=False)
-    klass_type = Column(String, nullable=False)  # LEC/LAB/TUT etc.
-    status = Column(Integer, nullable=False)
-    enrolled = Column(Integer, nullable=False)
-    capacity = Column(Integer, nullable=False)
+    klass_id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.String, nullable=False)
+    dept_id = db.Column(db.String, nullable=False)
+    klass_type = db.Column(db.String, nullable=False)  # LEC/LAB/TUT etc.
+    status = db.Column(db.Integer, nullable=False)
+    enrolled = db.Column(db.Integer, nullable=False)
+    capacity = db.Column(db.Integer, nullable=False)
     # to check whether we need to update the timeslots
-    timeslot_raw_string_hash = Column(Integer, nullable=False)
+    timeslot_raw_string_hash = db.Column(db.Integer, nullable=False)
     __table_args__ = (
-        ForeignKeyConstraint(
+        db.ForeignKeyConstraint(
             ['course_id', 'dept_id'],
             ['courses.course_id', 'courses.dept_id'],
             name="fk_course"
         ),
     )
 
-    timeslots = relationship('Timeslot', back_populates='klass',
+    timeslots = db.relationship('Timeslot', back_populates='klass',
                              cascade="all, delete, delete-orphan")
-    course = relationship('Course', back_populates='klasses')
-    alerts = relationship('Alert', order_by='Alert.alert_id',
+    course = db.relationship('Course', back_populates='klasses')
+    alerts = db.relationship('Alert', order_by='Alert.alert_id',
                           back_populates='klass',
                           cascade="all, delete, delete-orphan")
 
@@ -115,7 +112,7 @@ class Klass(Base):
                                        self.course_id, self.klass_type))
 
     def to_dict(self):
-        from util import db_status_to_text_status
+        from Tutorifull.util import db_status_to_text_status
 
         if self.capacity == 0:
             percentage = 0
@@ -132,17 +129,17 @@ class Klass(Base):
                 'percentage': percentage}
 
 
-class Timeslot(Base):
+class Timeslot(db.Model):
     __tablename__ = 'timeslots'
-    timeslot_id = Column(Integer, primary_key=True)
-    klass_id = Column(Integer, ForeignKey('klasses.klass_id'), nullable=False)
-    day = Column(Integer)
-    start_time = Column(Integer)
-    end_time = Column(Integer)
-    location = Column(String)
+    timeslot_id = db.Column(db.Integer, primary_key=True)
+    klass_id = db.Column(db.Integer, db.ForeignKey('klasses.klass_id'), nullable=False)
+    day = db.Column(db.Integer)
+    start_time = db.Column(db.Integer)
+    end_time = db.Column(db.Integer)
+    location = db.Column(db.String)
 
     def __repr__(self):
-        from util import (
+        from Tutorifull.util import (
             int_day_to_text_day,
             seconds_since_midnight_to_hour_of_day,
         )
@@ -156,7 +153,7 @@ class Timeslot(Base):
                     self.location))
 
     def to_dict(self):
-        from util import (
+        from Tutorifull.util import (
             int_day_to_text_day,
             seconds_since_midnight_to_hour_of_day,
         )
@@ -168,4 +165,10 @@ class Timeslot(Base):
                     self.end_time),
                 'location': self.location}
 
-    klass = relationship('Klass', back_populates='timeslots')
+    klass = db.relationship('Klass', back_populates='timeslots')
+
+def init_db():
+    db.create_all()
+
+if __name__ == '__main__':
+    init_db()

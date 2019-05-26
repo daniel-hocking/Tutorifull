@@ -9,14 +9,14 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-from config import SENTRY_DSN
-from constants import CURRENT_TERM, POSTGRES_MAX_INT
-from contact import send_alerts
-from dbhelper import db_session, get_redis
-from models import Alert, Course, Dept, Klass, Timeslot
-from tutorifull import app
 from sentry_sdk import capture_exception, capture_message
-from util import (
+
+from Tutorifull.constants import CURRENT_TERM, POSTGRES_MAX_INT
+from Tutorifull.contact import send_alerts
+from Tutorifull.models import Alert, Course, Dept, Klass, Timeslot
+from Tutorifull.dbhelper import get_redis
+from Tutorifull.app import app, db_session
+from Tutorifull.util import (
     hour_of_day_to_seconds_since_midnight,
     web_day_to_int_day,
     web_status_to_db_status,

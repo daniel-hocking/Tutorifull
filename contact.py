@@ -7,7 +7,9 @@ from email.mime.text import MIMEText
 from subprocess import PIPE, Popen
 
 import requests
-from config import (
+from flask import render_template
+
+from Tutorifull.config import (
     BASE_DOMAIN_NAME,
     FULL_DOMAIN_NAME,
     MAILGUN_API_KEY,
@@ -16,10 +18,9 @@ from config import (
     TELSTRA_CONSUMER_SECRET,
     YO_API_KEY,
 )
-from constants import CONTACT_TYPE_EMAIL, CONTACT_TYPE_SMS, CONTACT_TYPE_YO
-from dbhelper import get_redis
-from flask import render_template
-from util import chunks, klasses_to_template_courses
+from Tutorifull.constants import CONTACT_TYPE_EMAIL, CONTACT_TYPE_SMS, CONTACT_TYPE_YO
+from Tutorifull.dbhelper import get_redis
+from Tutorifull.util import chunks, klasses_to_template_courses
 
 
 def send_alerts(alerts):
