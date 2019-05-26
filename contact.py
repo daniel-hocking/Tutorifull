@@ -33,7 +33,7 @@ def send_alerts(alerts):
     for alert in alerts:
         alerts_by_contact[(alert.contact, alert.contact_type)].append(alert)
 
-    for contact, alerts in alerts_by_contact.iteritems():
+    for contact, alerts in alerts_by_contact.items():
         contact, contact_type = contact
         try:
             if contact_type == CONTACT_TYPE_EMAIL:

@@ -124,7 +124,7 @@ def klasses_to_template_courses(klasses):
 
     courses = [{'course_id': course_id,
                 'classes': [c.to_dict() for c in sorted(classes, key=sort_key)]}
-               for course_id, classes in sorted(courses_dict.iteritems())]
+               for course_id, classes in sorted(courses_dict.items())]
     return courses
 
 
