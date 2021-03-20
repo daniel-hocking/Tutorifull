@@ -6,7 +6,7 @@ contextlib2==0.5.4
 Flask==1.0
 Flask-AssetRev==1.0.0
 itsdangerous==0.24
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==0.23
 packaging==16.8
 psycopg2==2.6.2
